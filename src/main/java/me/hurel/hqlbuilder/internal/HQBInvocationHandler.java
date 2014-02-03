@@ -3,31 +3,32 @@ package me.hurel.hqlbuilder.internal;
 import static me.hurel.hqlbuilder.builder.HibernateQueryBuilder.*;
 import static me.hurel.hqlbuilder.builder.UnfinishedHibernateQueryBuilder.*;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
+import org.apache.log4j.Logger;
+
 public class HQBInvocationHandler implements MethodInterceptor {
+
+    private static final Logger LOGGER = Logger.getLogger(HQBInvocationHandler.class);
 
     private static ThreadLocal<HQBInvocationHandler> instance = new ThreadLocal<HQBInvocationHandler>();
 
     private StringBuilder currentPath;
 
-    private String root;
+    private String currentAlias;
 
-    private Class<?> rootEntity;
+    private Map<Object, String> aliases = new HashMap<Object, String>();
 
     private boolean started = false;
 
-    public HQBInvocationHandler(Class<?> rootEntity) {
-	this(rootEntity, toAlias(rootEntity));
-    }
-
-    public HQBInvocationHandler(Class<?> rootEntity, String root) {
+    public HQBInvocationHandler() {
 	super();
-	this.root = root;
-	this.rootEntity = getActualClass(rootEntity);
 	reset();
 	instance.set(this);
     }
@@ -36,32 +37,49 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	return instance.get();
     }
 
+    public void declareAlias(Object entity, String alias) {
+	aliases.put(entity, alias);
+    }
+
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-	try {
-	    Object returnValue = proxy.invokeSuper(obj, args);
+	Object returnValue = proxy.invokeSuper(obj, args);
+	if (isGetter(proxy.getSignature().getName())) {
+	    try {
+		if (!started) {
+		    if (aliases.get(obj) != null) {
+			currentPath.append(aliases.get(obj));
+		    } else {
+			currentPath.append(toAlias(getActualClass(obj.getClass())));
+		    }
+		}
 
-	    if (!started) {
-		if (getActualClass(obj.getClass()).equals(rootEntity)) {
-		    currentPath.append(root);
+		String fieldName = toPropertyName(proxy.getSignature().getName());
+		currentPath.append('.').append(fieldName);
+		Class<?> returnType = Class.forName(proxy.getSignature().getReturnType().getClassName());
+		if (!returnType.isPrimitive() && !returnType.getCanonicalName().startsWith("java.")) {
+		    if (returnValue == null) {
+			returnValue = returnType.newInstance();
+			returnValue = andQueryOn(returnValue);
+			Class<?> objClass = getActualClass(obj.getClass());
+			Field field = objClass.getDeclaredField(fieldName);
+			field.setAccessible(true);
+			field.set(obj, returnValue);
+		    }
+		}
+		if (aliases.get(returnValue) != null) {
+		    currentAlias = aliases.get(returnValue);
 		} else {
-		    currentPath.append(toAlias(getActualClass(obj.getClass())));
+		    currentAlias = fieldName;
 		}
+		return returnValue;
+	    } catch (Throwable t) {
+		LOGGER.error("", t);
+		throw t;
+	    } finally {
+		started = true;
 	    }
-
-	    currentPath.append('.').append(toPropertyName(proxy.getSignature().getName()));
-	    Class<?> returnType = Class.forName(proxy.getSignature().getReturnType().getClassName());
-	    if (!returnType.isPrimitive() && !returnType.getCanonicalName().startsWith("java.")) {
-		if (returnValue == null) {
-		    returnValue = returnType.newInstance();
-		}
-		returnValue = andQueryOn(returnValue);
-	    }
-	    return returnValue;
-	} catch (Throwable t) {
-	    throw t;
-	} finally {
-	    started = true;
 	}
+	return returnValue;
     }
 
     public void reset() {
@@ -71,6 +89,10 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     public String getCurrentPath() {
 	return currentPath.toString();
+    }
+
+    public String getCurrentAlias() {
+	return currentAlias;
     }
 
 }

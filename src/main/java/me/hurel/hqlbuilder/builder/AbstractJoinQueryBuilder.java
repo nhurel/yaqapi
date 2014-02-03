@@ -23,7 +23,14 @@ public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
 
     public InnerJoinQueryBuilder innerJoin(Object methodCall) {
 	String fullPath = HQBInvocationHandler.getCurrentInvocationHandler().getCurrentPath();
-	return chain(new InnerJoinQueryBuilder(this, fullPath, toSimpleName(fullPath)));
+	String alias = HQBInvocationHandler.getCurrentInvocationHandler().getCurrentAlias();
+	return chain(new InnerJoinQueryBuilder(this, fullPath, alias));
+    }
+
+    public InnerJoinQueryBuilder innerJoin(Object methodCall, String alias) {
+	andQueryOn(methodCall, alias);
+	String fullPath = HQBInvocationHandler.getCurrentInvocationHandler().getCurrentPath();
+	return chain(new InnerJoinQueryBuilder(this, fullPath, alias));
     }
 
     public InnerJoinQueryBuilder innerJoin(String property) {

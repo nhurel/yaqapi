@@ -6,7 +6,6 @@ import java.util.List;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 import net.sf.cglib.core.ReflectUtils;
 import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.Factory;
 
 import org.hibernate.Session;
 
@@ -42,7 +41,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 
     public static Class<?> getActualClass(Class<?> objectClass) {
 	Class<?> actualClass = objectClass;
-	if (Factory.class.isAssignableFrom(actualClass)) {
+	if (Enhancer.isEnhanced(actualClass)) {
 	    try {
 		actualClass = Class.forName(ReflectUtils.getClassInfo(actualClass).getSuperType().getClassName());
 	    } catch (ClassNotFoundException e) {
@@ -60,34 +59,35 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	return new UnfinishedSelectHibernateQueryBuilder(session, aliases);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T queryOn(T entity) {
-	Enhancer e = new Enhancer();
-	e.setClassLoader(entity.getClass().getClassLoader());
-	e.setSuperclass(entity.getClass());
-	e.setCallback(new HQBInvocationHandler(entity.getClass()));
-	e.setUseFactory(true);
-	return (T) e.create();
+	return queryOn(entity, toAlias(entity.getClass()));
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T queryOn(T entity, String alias) {
-	Enhancer e = new Enhancer();
-	e.setClassLoader(entity.getClass().getClassLoader());
-	e.setSuperclass(entity.getClass());
-	e.setCallback(new HQBInvocationHandler(entity.getClass(), alias));
-	e.setUseFactory(true);
-	return (T) e.create();
+	return queryOn(entity, alias, new HQBInvocationHandler());
     }
 
     @SuppressWarnings("unchecked")
+    private static <T> T queryOn(T entity, String alias, HQBInvocationHandler handler) {
+	T o = entity;
+	if (!Enhancer.isEnhanced(entity.getClass())) {
+	    Enhancer e = new Enhancer();
+	    e.setClassLoader(entity.getClass().getClassLoader());
+	    e.setSuperclass(entity.getClass());
+	    e.setCallback(handler);
+	    e.setUseFactory(true);
+	    o = (T) e.create();
+	}
+	handler.declareAlias(o, alias);
+	return o;
+    }
+
     public static <T> T andQueryOn(T entity) {
-	Enhancer e = new Enhancer();
-	e.setClassLoader(entity.getClass().getClassLoader());
-	e.setSuperclass(entity.getClass());
-	e.setCallback(HQBInvocationHandler.getCurrentInvocationHandler());
-	e.setUseFactory(true);
-	return (T) e.create();
+	return andQueryOn(entity, toAlias(getActualClass(entity.getClass())));
+    }
+
+    public static <T> T andQueryOn(T entity, String alias) {
+	return queryOn(entity, alias, HQBInvocationHandler.getCurrentInvocationHandler());
     }
 
     public String getQueryString() {

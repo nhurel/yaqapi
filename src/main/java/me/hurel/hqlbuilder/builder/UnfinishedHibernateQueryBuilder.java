@@ -26,4 +26,8 @@ public class UnfinishedHibernateQueryBuilder {
 	return StringUtils.uncapitalize(getter.substring(3));
     }
 
+    public static boolean isGetter(String method) {
+	return method.startsWith("get") || method.startsWith("is");
+    }
+
 }
