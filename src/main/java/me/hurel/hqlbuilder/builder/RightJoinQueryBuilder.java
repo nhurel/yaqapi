@@ -1,12 +1,10 @@
 package me.hurel.hqlbuilder.builder;
 
-
 public class RightJoinQueryBuilder extends AbstractOuterJoinQueryBuilder {
 
-    RightJoinQueryBuilder(HibernateQueryBuilder root, String object, String alias) {
+    RightJoinQueryBuilder(HibernateQueryBuilder root, Object object) {
 	super(root, JOIN.RIGHT);
 	this.object = object;
-	this.alias = alias;
     }
 
     public RightJoinQueryBuilder fetch() {

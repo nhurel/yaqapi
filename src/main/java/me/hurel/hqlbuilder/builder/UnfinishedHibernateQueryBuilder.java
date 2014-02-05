@@ -1,14 +1,14 @@
 package me.hurel.hqlbuilder.builder;
 
+import net.sf.cglib.core.ReflectUtils;
+import net.sf.cglib.proxy.Enhancer;
+
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Session;
 
 public class UnfinishedHibernateQueryBuilder {
-    protected final Session session;
 
-    UnfinishedHibernateQueryBuilder(Session session) {
+    UnfinishedHibernateQueryBuilder() {
 	super();
-	this.session = session;
     }
 
     public static String toAlias(Class<?> entity) {
@@ -28,6 +28,18 @@ public class UnfinishedHibernateQueryBuilder {
 
     public static boolean isGetter(String method) {
 	return method.startsWith("get") || method.startsWith("is");
+    }
+
+    public static Class<?> getActualClass(Class<?> objectClass) {
+	Class<?> actualClass = objectClass;
+	if (Enhancer.isEnhanced(actualClass)) {
+	    try {
+		actualClass = Class.forName(ReflectUtils.getClassInfo(actualClass).getSuperType().getClassName());
+	    } catch (ClassNotFoundException e) {
+		throw new RuntimeException(e);
+	    }
+	}
+	return actualClass;
     }
 
 }

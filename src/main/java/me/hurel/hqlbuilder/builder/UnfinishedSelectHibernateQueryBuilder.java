@@ -1,36 +1,22 @@
 package me.hurel.hqlbuilder.builder;
 
-import org.hibernate.Session;
-
 public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements HQBSelect {
 
-    private String[] aliases;
-    private boolean initialised;
+    Object[] aliases;
 
-    UnfinishedSelectHibernateQueryBuilder(Session session) {
-	super(session);
-	initialised = false;
+    UnfinishedSelectHibernateQueryBuilder() {
     }
 
-    UnfinishedSelectHibernateQueryBuilder(Session session, String... aliases) {
-	super(session);
-	this.aliases = aliases;
-	initialised = aliases != null;
+    UnfinishedSelectHibernateQueryBuilder(Object methodCall) {
+	this.aliases = new Object[] { methodCall };
     }
 
-    public FromHibernateQueryBuilder from(Class<?> entity) {
-	if (initialised) {
-	    return new SelectHibernateQueryBuilder(session, aliases).from(entity);
-	} else {
-	    return new SelectHibernateQueryBuilder(session, toAlias(entity)).from(entity);
-	}
+    UnfinishedSelectHibernateQueryBuilder(Object... methodCall) {
+	this.aliases = methodCall;
     }
 
-    public FromHibernateQueryBuilder from(Class<?> entity, String alias) {
-	if (initialised) {
-	    return new SelectHibernateQueryBuilder(session, aliases).from(entity, alias);
-	} else {
-	    return new SelectHibernateQueryBuilder(session, alias).from(entity, alias);
-	}
+    public FromHibernateQueryBuilder from(Object entity) {
+	return new SelectHibernateQueryBuilder(aliases).from(entity);
     }
+
 }
