@@ -88,5 +88,4 @@ public class ProxyOnlyTest {
 	assertThat(queryString).isEqualTo("SELECT adress.number, adress.street, adress.city.name, city.country.name FROM Adress adress ");
 	// assertThat(queryString).isEqualTo("SELECT adress.number, adress.street, adress.city.name, adress.city.country.name FROM Adress adress ");
     }
-
 }
