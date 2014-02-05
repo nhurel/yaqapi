@@ -2,10 +2,9 @@ package me.hurel.hqlbuilder.builder;
 
 public class InnerJoinQueryBuilder extends AbstractJoinQueryBuilder {
 
-    InnerJoinQueryBuilder(HibernateQueryBuilder root, String object, String alias) {
+    InnerJoinQueryBuilder(HibernateQueryBuilder root, Object object) {
 	super(root, JOIN.INNER);
 	this.object = object;
-	this.alias = alias;
     }
 
     public InnerJoinQueryBuilder fetch() {

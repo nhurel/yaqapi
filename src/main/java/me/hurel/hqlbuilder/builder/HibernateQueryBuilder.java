@@ -1,13 +1,12 @@
 package me.hurel.hqlbuilder.builder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
-import net.sf.cglib.core.ReflectUtils;
 import net.sf.cglib.proxy.Enhancer;
-
-import org.hibernate.Session;
 
 public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuilder {
 
@@ -18,45 +17,31 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     HQBInvocationHandler invocationHandler;
 
     HibernateQueryBuilder(HibernateQueryBuilder root) {
-	super(root.session);
 	this.root = root;
 	this.chain = root.chain;
 	this.invocationHandler = root.invocationHandler;
     }
 
-    HibernateQueryBuilder(Session session) {
-	super(session);
+    HibernateQueryBuilder() {
 	this.root = this;
 	this.chain = new ArrayList<HibernateQueryBuilder>();
     }
 
-    public static UnfinishedSelectHibernateQueryBuilder select(final Session session) {
-	return new UnfinishedSelectHibernateQueryBuilder(session);
+    public static UnfinishedSelectHibernateQueryBuilder select() {
+	return new UnfinishedSelectHibernateQueryBuilder();
     }
 
-    public static FromHibernateQueryBuilder selectFrom(final Session session, Object object) {
-	Class<?> objectClass = getActualClass(object.getClass());
-	return new SelectHibernateQueryBuilder(session, toAlias(objectClass)).from(objectClass);
+    public static FromHibernateQueryBuilder selectFrom(Object object) {
+	return new SelectHibernateQueryBuilder(object).from(object);
     }
 
-    public static Class<?> getActualClass(Class<?> objectClass) {
-	Class<?> actualClass = objectClass;
-	if (Enhancer.isEnhanced(actualClass)) {
-	    try {
-		actualClass = Class.forName(ReflectUtils.getClassInfo(actualClass).getSuperType().getClassName());
-	    } catch (ClassNotFoundException e) {
-		throw new RuntimeException(e);
-	    }
-	}
-	return actualClass;
+    public static UnfinishedSelectHibernateQueryBuilder select(Object methodCall) {
+	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
     }
 
-    public static UnfinishedSelectHibernateQueryBuilder select(final Session session, String alias) {
-	return new UnfinishedSelectHibernateQueryBuilder(session, alias);
-    }
-
-    public static UnfinishedSelectHibernateQueryBuilder select(final Session session, String... aliases) {
-	return new UnfinishedSelectHibernateQueryBuilder(session, aliases);
+    public static UnfinishedSelectHibernateQueryBuilder select(Object... methodCall) {
+	assert methodCall != null;
+	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
     }
 
     public static <T> T queryOn(T entity) {
@@ -83,7 +68,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     }
 
     public static <T> T andQueryOn(T entity) {
-	return andQueryOn(entity, toAlias(getActualClass(entity.getClass())));
+	return andQueryOn(entity, toAlias(UnfinishedHibernateQueryBuilder.getActualClass(entity.getClass())));
     }
 
     public static <T> T andQueryOn(T entity, String alias) {
@@ -91,7 +76,8 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     }
 
     public String getQueryString() {
-	HQBQueryStringVisitor visitor = new HQBQueryStringVisitor();
+	HQBQueryStringVisitor visitor = new HQBQueryStringVisitor(HQBInvocationHandler.getCurrentInvocationHandler().getAliases(), HQBInvocationHandler
+		.getCurrentInvocationHandler().getPaths());
 	for (HibernateQueryBuilder builder : chain) {
 	    builder.accept(visitor);
 	}
@@ -107,6 +93,25 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	    root.chain(queryBuilder);
 	}
 	return queryBuilder;
+    }
+
+    private Map<Object, String> aliases = new HashMap<Object, String>();
+    private Map<Object, String> paths = new HashMap<Object, String>();
+
+    protected void keepAlias(Object entity, String alias) {
+	if (this == root) {
+	    aliases.put(entity, alias);
+	} else {
+	    root.keepAlias(entity, alias);
+	}
+    }
+
+    protected void keepPath(Object entity, String path) {
+	if (this == root) {
+	    paths.put(entity, path);
+	} else {
+	    root.keepPath(entity, path);
+	}
     }
 
 }

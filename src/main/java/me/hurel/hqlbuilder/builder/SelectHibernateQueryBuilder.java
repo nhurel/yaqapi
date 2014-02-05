@@ -1,27 +1,20 @@
 package me.hurel.hqlbuilder.builder;
 
-import org.hibernate.Session;
-
 public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implements HQBSelect {
 
-    String[] aliases;
+    Object[] aliases;
 
-    SelectHibernateQueryBuilder(Session session, String... selects) {
-	super(session);
+    SelectHibernateQueryBuilder(Object... selects) {
 	this.aliases = selects;
 	chain(this);
     }
 
-    public FromHibernateQueryBuilder from(Class<?> entity) {
-	return from(entity, toAlias(entity));
-    }
-
-    public FromHibernateQueryBuilder from(Class<?> entity, String alias) {
-	return chain(new FromHibernateQueryBuilder(this, entity, alias));
+    public FromHibernateQueryBuilder from(Object entity) {
+	return chain(new FromHibernateQueryBuilder(this, entity));
     }
 
     @Override
-    public void accept(HQBVisitor visitor) {
+    protected void accept(HQBVisitor visitor) {
 	visitor.visit(this);
     }
 

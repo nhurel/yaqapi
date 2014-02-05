@@ -5,8 +5,12 @@ import static me.hurel.hqlbuilder.builder.UnfinishedHibernateQueryBuilder.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -25,11 +29,21 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     private Map<Object, String> aliases = new HashMap<Object, String>();
 
+    private Map<Object, String> paths = new HashMap<Object, String>();
+
+    private Object lastEntity;
+
+    private List<String> fullPathHistory;
+
+    private List<String> aliasesHistory;
+
     private boolean started = false;
 
     public HQBInvocationHandler() {
 	super();
 	reset();
+	fullPathHistory = new ArrayList<String>();
+	aliasesHistory = new ArrayList<String>();
 	instance.set(this);
     }
 
@@ -39,12 +53,17 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     public void declareAlias(Object entity, String alias) {
 	aliases.put(entity, alias);
+	paths.put(entity, alias);
     }
 
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
 	Object returnValue = proxy.invokeSuper(obj, args);
 	if (isGetter(proxy.getSignature().getName())) {
 	    try {
+		if (lastEntity == null || !obj.equals(lastEntity)) {
+		    historise();
+		}
+
 		if (!started) {
 		    if (aliases.get(obj) != null) {
 			currentPath.append(aliases.get(obj));
@@ -56,21 +75,25 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		String fieldName = toPropertyName(proxy.getSignature().getName());
 		currentPath.append('.').append(fieldName);
 		Class<?> returnType = Class.forName(proxy.getSignature().getReturnType().getClassName());
-		if (!returnType.isPrimitive() && !returnType.getCanonicalName().startsWith("java.")) {
-		    if (returnValue == null) {
-			returnValue = returnType.newInstance();
+		if (returnValue == null) {
+		    returnValue = returnType.newInstance();
+		    if (!returnType.isPrimitive() && !returnType.getCanonicalName().startsWith("java.")) {
 			returnValue = andQueryOn(returnValue);
-			Class<?> objClass = getActualClass(obj.getClass());
-			Field field = objClass.getDeclaredField(fieldName);
-			field.setAccessible(true);
-			field.set(obj, returnValue);
+		    } else if (returnType.getCanonicalName().equals("java.lang.String")) {
+			returnValue = UUID.randomUUID().toString();
 		    }
+		    Class<?> objClass = getActualClass(obj.getClass());
+		    Field field = objClass.getDeclaredField(fieldName);
+		    field.setAccessible(true);
+		    field.set(obj, returnValue);
 		}
 		if (aliases.get(returnValue) != null) {
 		    currentAlias = aliases.get(returnValue);
 		} else {
 		    currentAlias = fieldName;
 		}
+		lastEntity = returnValue;
+		paths.put(returnValue, getCurrentPath());
 		return returnValue;
 	    } catch (Throwable t) {
 		LOGGER.error("", t);
@@ -83,8 +106,26 @@ public class HQBInvocationHandler implements MethodInterceptor {
     }
 
     public void reset() {
-	currentPath = new StringBuilder(); // new StringBuilder(root);
+	currentPath = new StringBuilder();
+	currentAlias = null;
 	started = false;
+    }
+
+    private void historise() {
+	if (started) {
+	    paths.put(lastEntity, getCurrentPath());
+	    fullPathHistory.add(getCurrentPath());
+	    aliasesHistory.add(getCurrentAlias());
+	}
+	reset();
+    }
+
+    public Map<Object, String> getAliases() {
+	return Collections.unmodifiableMap(aliases);
+    }
+
+    public Map<Object, String> getPaths() {
+	return Collections.unmodifiableMap(paths);
     }
 
     public String getCurrentPath() {
