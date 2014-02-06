@@ -10,9 +10,11 @@ public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
 
     final String join;
 
-    AbstractJoinQueryBuilder(HibernateQueryBuilder root, JOIN join) {
+    AbstractJoinQueryBuilder(HibernateQueryBuilder root, JOIN join, Object object) {
 	super(root);
 	this.join = join.getJunction();
+	this.object = object;
+	addJoinedEntity(object);
 	HQBInvocationHandler invocationHandler = HQBInvocationHandler.getCurrentInvocationHandler();
 	if (invocationHandler != null) {
 	    invocationHandler.reset();
@@ -20,11 +22,6 @@ public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
     }
 
     public InnerJoinQueryBuilder innerJoin(Object methodCall) {
-	return chain(new InnerJoinQueryBuilder(this, methodCall));
-    }
-
-    public InnerJoinQueryBuilder innerJoin(Object methodCall, String alias) {
-	andQueryOn(methodCall, alias);
 	return chain(new InnerJoinQueryBuilder(this, methodCall));
     }
 

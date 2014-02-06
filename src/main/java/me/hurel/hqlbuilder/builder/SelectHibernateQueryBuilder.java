@@ -14,7 +14,7 @@ public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implement
     }
 
     @Override
-    protected void accept(HQBVisitor visitor) {
+    void accept(HQBVisitor visitor) {
 	visitor.visit(this);
     }
 

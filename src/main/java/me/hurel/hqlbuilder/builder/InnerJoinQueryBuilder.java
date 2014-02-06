@@ -3,8 +3,7 @@ package me.hurel.hqlbuilder.builder;
 public class InnerJoinQueryBuilder extends AbstractJoinQueryBuilder {
 
     InnerJoinQueryBuilder(HibernateQueryBuilder root, Object object) {
-	super(root, JOIN.INNER);
-	this.object = object;
+	super(root, JOIN.INNER, object);
     }
 
     public InnerJoinQueryBuilder fetch() {
@@ -13,7 +12,7 @@ public class InnerJoinQueryBuilder extends AbstractJoinQueryBuilder {
     }
 
     @Override
-    protected void accept(HQBVisitor visitor) {
+    void accept(HQBVisitor visitor) {
 	visitor.visit(this);
     }
 

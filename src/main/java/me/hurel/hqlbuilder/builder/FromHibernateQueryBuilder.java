@@ -3,12 +3,11 @@ package me.hurel.hqlbuilder.builder;
 public class FromHibernateQueryBuilder extends AbstractJoinQueryBuilder {
 
     FromHibernateQueryBuilder(HibernateQueryBuilder root, Object entity) {
-	super(root, JOIN.FROM);
-	this.object = entity;
+	super(root, JOIN.FROM, entity);
     }
 
     @Override
-    protected void accept(HQBVisitor visitor) {
+    void accept(HQBVisitor visitor) {
 	visitor.visit(this);
     }
 

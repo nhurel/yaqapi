@@ -31,6 +31,12 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     private Map<Object, String> paths = new HashMap<Object, String>();
 
+    /**
+     * Map used to retrieve parent proxy of an entity. Key is the child entity
+     * and value is its parent
+     */
+    private Map<Object, Object> parentsEntities = new HashMap<Object, Object>();;
+
     private Object lastEntity;
 
     private List<String> fullPathHistory;
@@ -57,7 +63,13 @@ public class HQBInvocationHandler implements MethodInterceptor {
     }
 
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-	Object returnValue = proxy.invokeSuper(obj, args);
+	Object returnValue;
+	if (proxy.getSignature().getName().equals("equals") && args.length == 1) {
+	    // Equals of the proxied entities must be safe
+	    returnValue = (obj == args[0]);
+	} else {
+	    returnValue = proxy.invokeSuper(obj, args);
+	}
 	if (isGetter(proxy.getSignature().getName())) {
 	    try {
 		if (lastEntity == null || !obj.equals(lastEntity)) {
@@ -65,8 +77,8 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		}
 
 		if (!started) {
-		    if (aliases.get(obj) != null) {
-			currentPath.append(aliases.get(obj));
+		    if (paths.get(obj) != null) {
+			currentPath.append(paths.get(obj));
 		    } else {
 			currentPath.append(toAlias(getActualClass(obj.getClass())));
 		    }
@@ -86,6 +98,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		    Field field = objClass.getDeclaredField(fieldName);
 		    field.setAccessible(true);
 		    field.set(obj, returnValue);
+		    parentsEntities.put(returnValue, obj);
 		}
 		if (aliases.get(returnValue) != null) {
 		    currentAlias = aliases.get(returnValue);
@@ -126,6 +139,10 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     public Map<Object, String> getPaths() {
 	return Collections.unmodifiableMap(paths);
+    }
+
+    public Map<Object, Object> getParentsEntities() {
+	return Collections.unmodifiableMap(parentsEntities);
     }
 
     public String getCurrentPath() {
