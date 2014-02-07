@@ -27,6 +27,9 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
     public void visit(SelectHibernateQueryBuilder select) {
 	query.append("SELECT ");
+	if (select.distinct) {
+	    query.append("DISTINCT ");
+	}
 	int i = select.aliases.length;
 	for (Object alias : select.aliases) {
 	    query.append(getAliasOrPath(alias));

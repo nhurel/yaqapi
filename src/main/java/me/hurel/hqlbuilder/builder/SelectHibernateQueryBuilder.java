@@ -4,6 +4,8 @@ public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implement
 
     Object[] aliases;
 
+    boolean distinct = false;
+
     SelectHibernateQueryBuilder(Object... selects) {
 	this.aliases = selects;
 	chain(this);
@@ -16,6 +18,11 @@ public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implement
     @Override
     void accept(HQBVisitor visitor) {
 	visitor.visit(this);
+    }
+
+    public SelectHibernateQueryBuilder distinct() {
+	this.distinct = true;
+	return this;
     }
 
 }

@@ -11,7 +11,7 @@ import me.hurel.entity.User;
 import org.hibernate.Session;
 import org.junit.Test;
 
-public class ProxyOnlyTest {
+public class SelectTest {
 
     Session session;
 
@@ -168,21 +168,6 @@ public class ProxyOnlyTest {
 		.rightJoinFetch(user.getAdress().getCity().getCountry()).getQueryString();
 
 	assertThat(queryString).isEqualTo("SELECT user FROM User user INNER JOIN FETCH user.adress adress LEFT JOIN FETCH adress.city city RIGHT JOIN FETCH city.country country ");
-    }
-
-    @Test
-    public void select_list_property() {
-	User user = queryOn(new User());
-	String queryString = select(user.getChildren()).from(user).getQueryString();
-	assertThat(queryString).isEqualTo("SELECT user.children FROM User user ");
-    }
-
-    @Test
-    public void join_on_list_property() {
-	User user = queryOn(new User());
-
-	String queryString = select(user).from(user).leftJoinFetch(user.getChildren()).leftJoin($(user.getChildren()).getAdress()).getQueryString();
-	assertThat(queryString).isEqualTo("SELECT user FROM User user LEFT JOIN FETCH user.children children LEFT JOIN children.adress adress ");
     }
 
 }

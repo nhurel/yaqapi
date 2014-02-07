@@ -4,6 +4,8 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
 
     Object[] aliases;
 
+    boolean distinct = false;
+
     UnfinishedSelectHibernateQueryBuilder() {
     }
 
@@ -16,7 +18,16 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
     }
 
     public FromHibernateQueryBuilder from(Object entity) {
-	return new SelectHibernateQueryBuilder(aliases).from(entity);
+	SelectHibernateQueryBuilder select = new SelectHibernateQueryBuilder(aliases);
+	if (distinct) {
+	    select = select.distinct();
+	}
+	return select.from(entity);
+    }
+
+    public UnfinishedSelectHibernateQueryBuilder distinct() {
+	distinct = true;
+	return this;
     }
 
 }

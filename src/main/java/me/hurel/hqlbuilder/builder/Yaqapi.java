@@ -51,16 +51,7 @@ public class Yaqapi {
     }
 
     /**
-     * Start a new query
-     * 
-     * @return
-     */
-    public static UnfinishedSelectHibernateQueryBuilder select() {
-	return new UnfinishedSelectHibernateQueryBuilder();
-    }
-
-    /**
-     * Start a new query to get only one entity
+     * Start a new query to get only ones entity
      * 
      * @param entity
      *            The entity to query on
@@ -71,14 +62,37 @@ public class Yaqapi {
     }
 
     /**
-     * Start a query to get a property on an entity
+     * Start a new query to get only distinct ones entity
+     * 
+     * @param entity
+     *            The entity to query on
+     * @return
+     */
+    public static FromHibernateQueryBuilder selectDistinctFrom(Object entity) {
+	return new SelectHibernateQueryBuilder(entity).distinct().from(entity);
+    }
+
+    /**
+     * Start a query to get a property on an entity or an entity itself
      * 
      * @param methodCall
-     *            the property to get from the entity
+     *            the property to get from the entity oe the entity
      * @return
      */
     public static UnfinishedSelectHibernateQueryBuilder select(Object methodCall) {
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
+    }
+
+    /**
+     * Start a query to get distinct value of the property of on an entity or of
+     * the entities
+     * 
+     * @param methodCall
+     *            the property to get from the entity or the entity
+     * @return
+     */
+    public static UnfinishedSelectHibernateQueryBuilder selectDistinct(Object methodCall) {
+	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
     }
 
     /**
@@ -91,5 +105,17 @@ public class Yaqapi {
     public static UnfinishedSelectHibernateQueryBuilder select(Object... methodCall) {
 	assert methodCall != null;
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
+    }
+
+    /**
+     * Start a query to get distinct properties and/or entities
+     * 
+     * @param methodCall
+     *            the properties and entities to get
+     * @return
+     */
+    public static UnfinishedSelectHibernateQueryBuilder selectDistinct(Object... methodCall) {
+	assert methodCall != null;
+	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
     }
 }
