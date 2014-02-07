@@ -81,11 +81,11 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
      * @return
      */
     public static <T> T queryOn(T entity) {
-	return queryOn(entity, toAlias(entity.getClass()), new HQBInvocationHandler());
+        return queryOn(entity, new HQBInvocationHandler());
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T queryOn(T entity, String alias, HQBInvocationHandler handler) {
+    private static <T> T queryOn(T entity, HQBInvocationHandler handler) {
 	T o = entity;
 	if (!Enhancer.isEnhanced(entity.getClass())) {
 	    Enhancer e = new Enhancer();
@@ -95,7 +95,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	    e.setUseFactory(true);
 	    o = (T) e.create();
 	}
-	handler.declareAlias(o, alias);
+        handler.declareAlias(o);
 	return o;
     }
 
@@ -107,7 +107,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
      * @return
      */
     public static <T> T andQueryOn(T entity) {
-	return queryOn(entity, toAlias(UnfinishedHibernateQueryBuilder.getActualClass(entity.getClass())), HQBInvocationHandler.getCurrentInvocationHandler());
+        return queryOn(entity, HQBInvocationHandler.getCurrentInvocationHandler());
     }
 
     /**
