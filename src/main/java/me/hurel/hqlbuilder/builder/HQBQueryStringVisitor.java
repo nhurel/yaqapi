@@ -1,9 +1,9 @@
 package me.hurel.hqlbuilder.builder;
 
-import static me.hurel.hqlbuilder.builder.UnfinishedHibernateQueryBuilder.*;
-
 import java.util.List;
 import java.util.Map;
+
+import me.hurel.hqlbuilder.internal.ProxyUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,7 +38,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(FromHibernateQueryBuilder fromClause) {
-	query.append(from ? ',' : fromClause.join).append(' ').append(getActualClass(fromClause.object.getClass()).getSimpleName()).append(' ')
+	query.append(from ? ',' : fromClause.join).append(' ').append(ProxyUtil.getActualClass(fromClause.object.getClass()).getSimpleName()).append(' ')
 		.append(aliases.get(fromClause.object)).append(' ');
 	from = true;
     }

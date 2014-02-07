@@ -1,5 +1,7 @@
 package me.hurel.entity;
 
+import java.util.List;
+
 public class User {
 
     private String firstName;
@@ -7,6 +9,16 @@ public class User {
     private String lastName;
 
     private Adress adress;
+
+    private List<User> children;
+
+    public List<User> getChildren() {
+	return children;
+    }
+
+    public void setChildren(List<User> children) {
+	this.children = children;
+    }
 
     public Adress getAdress() {
 	return adress;
