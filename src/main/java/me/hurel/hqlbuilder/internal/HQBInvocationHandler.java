@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -68,6 +69,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	    String newAlias = alias + i;
 	    while (aliases.containsValue(newAlias)) {
 		i++;
+		newAlias = alias + i;
 	    }
 	    alias = newAlias;
 	}
@@ -77,13 +79,13 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
 	Object returnValue;
-	if (proxy.getSignature().getName().equals("equals") && args.length == 1) {
+	if (method.getName().equals("equals") && args.length == 1) {
 	    // Equals of the proxied entities must be safe
 	    returnValue = (obj == args[0]);
 	} else {
 	    returnValue = proxy.invokeSuper(obj, args);
 	}
-	if (isGetter(proxy.getSignature().getName())) {
+	if (isGetter(method.getName())) {
 	    try {
 		if (lastEntity == null || !obj.equals(lastEntity)) {
 		    historise();
@@ -97,10 +99,10 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		    }
 		}
 
-		String fieldName = toPropertyName(proxy.getSignature().getName());
+		String fieldName = toPropertyName(method.getName());
 		currentPath.append('.').append(fieldName);
 		Class<?> returnType = method.getReturnType();
-		if (returnValue == null) {
+		if (returnValue == null || returnType.isPrimitive()) {
 		    returnValue = getReturnValue(returnType, method, fieldName);
 		    Class<?> objClass = getActualClass(obj.getClass());
 		    Field field = objClass.getDeclaredField(fieldName);
@@ -129,20 +131,56 @@ public class HQBInvocationHandler implements MethodInterceptor {
     private Object getReturnValue(Class<?> returnType, Method method, String fieldName) throws InstantiationException, IllegalAccessException {
 	Object returnValue;
 	if (Collection.class.isAssignableFrom(returnType)) {
-	    returnValue = buildProxy(getParameter(method), getProxyCollection(returnType), this);
+	    returnValue = buildProxy(getParameter(method), returnType, this);
 	    declareAlias(returnValue, fieldName);
 	} else if (returnType.isInterface()) {
 	    returnValue = buildProxy(null, returnType, this);
 	} else {
-	    returnValue = returnType.newInstance();
+	    if (returnType.isPrimitive() || returnType.getCanonicalName().startsWith("java.lang")) {
+		returnValue = random(returnType);
+	    } else {
+		returnValue = returnType.newInstance();
+		returnValue = buildProxy(returnValue, returnType, this);
+	    }
 	}
 
-	if (!returnType.isPrimitive() && !returnType.getCanonicalName().startsWith("java.")) {
-	    returnValue = buildProxy(returnValue, returnType, this);
-	} else if (returnType.getCanonicalName().equals("java.lang.String")) {
-	    returnValue = UUID.randomUUID().toString();
-	}
 	return returnValue;
+    }
+
+    private byte lastByte = Byte.MIN_VALUE;
+    private boolean lastBoolean = false;
+    private int lastInt = Integer.MIN_VALUE;
+    private char lastChar = Character.MIN_VALUE;
+    private double lastDouble = Double.MIN_VALUE;
+    private float lastFloat = Float.MIN_VALUE;
+    private long lastLong = Long.MIN_VALUE;
+    private short lastShort = Short.MIN_VALUE;
+
+    Random r = new Random();
+
+    private Object random(Class<?> randomizeType) {
+	if (String.class.equals(randomizeType)) {
+	    return UUID.randomUUID().toString();
+	} else if (boolean.class.equals(randomizeType) || Boolean.class.equals(randomizeType)) {
+	    lastBoolean = !lastBoolean;
+	    // TODO LOG WARN ABOUT BOOLEAN SUPPORT
+	    return lastBoolean;
+	} else if (Byte.class.equals(randomizeType) || byte.class.equals(randomizeType)) {
+	    return ++lastByte;
+	} else if (int.class.equals(randomizeType) || Integer.class.equals(randomizeType)) {
+	    return ++lastInt;
+	} else if (char.class.equals(randomizeType) || Character.class.equals(randomizeType)) {
+	    return ++lastChar;
+	} else if (double.class.equals(randomizeType) || Double.class.equals(randomizeType)) {
+	    return ++lastDouble;
+	} else if (float.class.equals(randomizeType) || Float.class.equals(randomizeType)) {
+	    return ++lastFloat;
+	} else if (long.class.equals(randomizeType) || Long.class.equals(randomizeType)) {
+	    return ++lastLong;
+	} else if (short.class.equals(randomizeType) || Short.class.equals(randomizeType)) {
+	    return ++lastShort;
+	}
+	return null;
     }
 
     public void reset() {

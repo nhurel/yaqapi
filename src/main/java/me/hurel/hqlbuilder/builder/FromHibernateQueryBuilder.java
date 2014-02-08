@@ -1,5 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
+
 public class FromHibernateQueryBuilder extends AbstractJoinQueryBuilder {
 
     FromHibernateQueryBuilder(HibernateQueryBuilder root, Object entity) {

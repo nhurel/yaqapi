@@ -22,6 +22,12 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
      */
     protected final HibernateQueryBuilder root;
 
+    private boolean visited = false;
+
+    private String queryString;
+
+    private List<Object> parameters;
+
     /**
      * Handler of the proxies. This handler knows the alias and all the paths in
      * the query
@@ -56,12 +62,25 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
      * @return
      */
     public String getQueryString() {
-	HQBQueryStringVisitor visitor = new HQBQueryStringVisitor(HQBInvocationHandler.getCurrentInvocationHandler().getAliases(), HQBInvocationHandler
-		.getCurrentInvocationHandler().getPaths(), HQBInvocationHandler.getCurrentInvocationHandler().getParentsEntities(), joinedEntities);
-	for (HibernateQueryBuilder builder : chain) {
-	    builder.accept(visitor);
+	ensureVisited();
+	return queryString;
+    }
+
+    public List<Object> getParameters() {
+	ensureVisited();
+	return parameters;
+    }
+
+    private void ensureVisited() {
+	if (!visited) {
+	    HQBQueryStringVisitor visitor = new HQBQueryStringVisitor(HQBInvocationHandler.getCurrentInvocationHandler().getAliases(), HQBInvocationHandler
+		    .getCurrentInvocationHandler().getPaths(), HQBInvocationHandler.getCurrentInvocationHandler().getParentsEntities(), joinedEntities);
+	    for (HibernateQueryBuilder builder : chain) {
+		builder.accept(visitor);
+	    }
+	    queryString = visitor.getQuery();
+	    parameters = visitor.getParameters();
 	}
-	return visitor.getQuery();
     }
 
     abstract void accept(HQBVisitor visitor);
@@ -77,6 +96,31 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 
     void addJoinedEntity(Object entity) {
 	joinedEntities.add(entity);
+    }
+
+    enum OPERATOR {
+	IS_NULL("IS NULL"), IS_NOT_NULL("IS NOT NULL"), EQUAL("="), NOT_EQUAL("<>"), LIKE("LIKE"), NOT_LIKE("NOT LIKE"), GREATER(">"), GREATER_EQUAL(">="), LESS("<"), LESS_EQUAL(
+		"<=");
+
+	String operator;
+
+	OPERATOR(String operator) {
+	    this.operator = operator;
+	}
+    }
+
+    enum SEPARATOR {
+	WHERE("WHERE"), AND("AND"), OR("OR");
+
+	String separator;
+
+	SEPARATOR(String separator) {
+	    this.separator = separator;
+	}
+
+	public String getSeparator() {
+	    return separator;
+	}
     }
 
 }

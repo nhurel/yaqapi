@@ -2,37 +2,17 @@ package me.hurel.hqlbuilder.internal;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.List;
-import java.util.SortedSet;
 
-import me.hurel.hqlbuilder.helper.CollectionHelper;
-import me.hurel.hqlbuilder.helper.ListHelper;
-import me.hurel.hqlbuilder.helper.SetHelper;
-import me.hurel.hqlbuilder.helper.SortedSetHelper;
 import net.sf.cglib.core.ReflectUtils;
 import net.sf.cglib.proxy.Enhancer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.mapping.Set;
 
 public class ProxyUtil {
 
     public static Class<?> getParameter(Method method) {
 	Class<?> result = (Class<?>) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
 	return result;
-    }
-
-    public static Class<?> getProxyCollection(Class<?> collectionClass) {
-	if (List.class.isAssignableFrom(collectionClass)) {
-	    return ListHelper.class;
-	}
-	if (SortedSet.class.isAssignableFrom(collectionClass)) {
-	    return SortedSetHelper.class;
-	}
-	if (Set.class.isAssignableFrom(collectionClass)) {
-	    return SetHelper.class;
-	}
-	return CollectionHelper.class;
     }
 
     public static String toAlias(Class<?> entity) {

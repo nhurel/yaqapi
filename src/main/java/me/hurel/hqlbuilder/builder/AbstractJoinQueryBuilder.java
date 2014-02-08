@@ -49,6 +49,10 @@ public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
 	return chain(new FromHibernateQueryBuilder(this, entity));
     }
 
+    public <T> WhereHibernateQueryBuilder<T> where(T methodCall) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall));
+    }
+
     enum JOIN {
 	FROM("FROM"), INNER("INNER JOIN"), LEFT("LEFT JOIN"), RIGHT("RIGHT JOIN"), CARTESIAN(",");
 

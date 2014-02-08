@@ -1,5 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     private final Map<Object, String> paths;
     private final Map<Object, Object> parentEntities;
     private final List<Object> joinedEntities;
+    List<Object> parameters;
 
     public HQBQueryStringVisitor(Map<Object, String> aliases, Map<Object, String> paths, Map<Object, Object> parentEntities, List<Object> joinedEntities) {
 	this.aliases = aliases;
@@ -48,6 +50,25 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
     public void visit(AbstractJoinQueryBuilder join) {
 	query.append(join.join).append(join.fetch ? " FETCH " : ' ').append(getReducedPath(join.object)).append(' ').append(aliases.get(join.object)).append(' ');
+    }
+
+    public void visit(WhereHibernateQueryBuilder<?> where) {
+	query.append(where.operator).append(' ').append(getReducedPath(where.value)).append(' ');
+    }
+
+    public void visit(NullConditionHibernateQueryBuilder<?> builder) {
+	query.append(builder.operator).append(' ');
+    }
+
+    public void visit(ConditionHibernateQueryBuilder<?> builder) {
+	query.append(builder.operator).append(' ');
+	if (parentEntities.containsKey(builder.value)) {
+	    query.append(getAliasOrPath(builder.value));
+	} else {
+	    query.append('?');
+	    addParameter(builder.value);
+	}
+	query.append(' ');
     }
 
     private String getAliasOrPath(Object entity) {
@@ -96,7 +117,18 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	return result;
     }
 
+    private void addParameter(Object parameter) {
+	if (parameters == null) {
+	    parameters = new ArrayList<Object>();
+	}
+	parameters.add(parameter);
+    }
+
     public String getQuery() {
 	return query.toString();
+    }
+
+    public List<Object> getParameters() {
+	return parameters;
     }
 }

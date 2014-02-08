@@ -8,4 +8,10 @@ public interface HQBVisitor {
 
     public void visit(AbstractJoinQueryBuilder builder);
 
+    public void visit(ConditionHibernateQueryBuilder<?> builder);
+
+    public void visit(NullConditionHibernateQueryBuilder<?> builder);
+
+    public void visit(WhereHibernateQueryBuilder<?> builder);
+
 }
