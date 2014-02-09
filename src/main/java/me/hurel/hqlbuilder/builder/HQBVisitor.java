@@ -6,7 +6,7 @@ public interface HQBVisitor {
 
     public void visit(FromHibernateQueryBuilder builder);
 
-    public void visit(AbstractJoinQueryBuilder builder);
+    public void visit(JoinQueryBuilder builder);
 
     public void visit(ConditionHibernateQueryBuilder<?> builder);
 

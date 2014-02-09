@@ -22,6 +22,10 @@ public class ConditionHibernateQueryBuilder<T> extends HibernateQueryBuilder {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall));
     }
 
+    public <U> WhereHibernateQueryBuilder<U> or(U methodCall) {
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall));
+    }
+
     @Override
     void accept(HQBVisitor visitor) {
 	visitor.visit(this);

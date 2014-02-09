@@ -106,4 +106,15 @@ public class WhereTest {
 	assertThat(query.getParameters()).isNullOrEmpty();
     }
 
+    @Test
+    public void where_or_where_clause() {
+	User user = queryOn(new User());
+	User user2 = andQueryOn(new User());
+	NullConditionHibernateQueryBuilder<String> query = select(user.getFirstName(), user2.getFirstName()).from(user).andFrom(user2).where(user.getLastName())
+		.isEqualTo(user2.getLastName()).or(user.getFirstName()).isNull();
+	String queryString = query.getQueryString();
+	assertThat(queryString).isEqualTo("SELECT user.firstName, user2.firstName FROM User user , User user2 WHERE user.lastName = user2.lastName OR user.firstName IS NULL ");
+	assertThat(query.getParameters()).isNullOrEmpty();
+    }
+
 }

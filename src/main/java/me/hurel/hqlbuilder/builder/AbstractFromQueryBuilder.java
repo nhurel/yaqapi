@@ -2,7 +2,7 @@ package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
-public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
+public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder {
 
     Object object;
 
@@ -10,7 +10,7 @@ public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
 
     final String join;
 
-    AbstractJoinQueryBuilder(HibernateQueryBuilder root, JOIN join, Object object) {
+    AbstractFromQueryBuilder(HibernateQueryBuilder root, JOIN join, Object object) {
 	super(root);
 	this.join = join.getJunction();
 	this.object = object;
@@ -21,31 +21,31 @@ public abstract class AbstractJoinQueryBuilder extends HibernateQueryBuilder {
 	}
     }
 
-    public InnerJoinQueryBuilder innerJoin(Object methodCall) {
-	return chain(new InnerJoinQueryBuilder(this, methodCall));
+    public JoinQueryBuilder innerJoin(Object methodCall) {
+	return chain(new JoinQueryBuilder(this, JOIN.INNER, methodCall));
     }
 
-    public InnerJoinQueryBuilder innerJoinFetch(Object methodCall) {
+    public JoinQueryBuilder innerJoinFetch(Object methodCall) {
 	return innerJoin(methodCall).fetch();
     }
 
-    public LeftJoinQueryBuilder leftJoin(Object methodCall) {
-	return chain(new LeftJoinQueryBuilder(this, methodCall));
+    public JoinQueryBuilder leftJoin(Object methodCall) {
+	return chain(new JoinQueryBuilder(this, JOIN.LEFT, methodCall));
     }
 
-    public LeftJoinQueryBuilder leftJoinFetch(Object methodCall) {
+    public JoinQueryBuilder leftJoinFetch(Object methodCall) {
 	return leftJoin(methodCall).fetch();
     }
 
-    public RightJoinQueryBuilder rightJoin(Object methodCall) {
-	return chain(new RightJoinQueryBuilder(this, methodCall));
+    public JoinQueryBuilder rightJoin(Object methodCall) {
+	return chain(new JoinQueryBuilder(this, JOIN.RIGHT, methodCall));
     }
 
-    public RightJoinQueryBuilder rightJoinFetch(Object methodCall) {
+    public JoinQueryBuilder rightJoinFetch(Object methodCall) {
 	return rightJoin(methodCall).fetch();
     }
 
-    public FromHibernateQueryBuilder andFrom(Object entity) {
+    public AbstractFromQueryBuilder andFrom(Object entity) {
 	return chain(new FromHibernateQueryBuilder(this, entity));
     }
 

@@ -49,7 +49,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	from = true;
     }
 
-    public void visit(AbstractJoinQueryBuilder join) {
+    public void visit(JoinQueryBuilder join) {
 	query.append(join.join).append(join.fetch ? " FETCH " : ' ').append(getReducedPath(join.object)).append(' ').append(aliases.get(join.object)).append(' ');
     }
 
