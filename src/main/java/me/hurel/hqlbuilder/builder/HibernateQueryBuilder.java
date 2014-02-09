@@ -99,8 +99,9 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     }
 
     enum OPERATOR {
-	IS_NULL("IS NULL"), IS_NOT_NULL("IS NOT NULL"), EQUAL("="), NOT_EQUAL("<>"), LIKE("LIKE"), NOT_LIKE("NOT LIKE"), GREATER(">"), GREATER_EQUAL(">="), LESS("<"), LESS_EQUAL(
-		"<=");
+	IS_NULL("IS NULL"), IS_NOT_NULL("IS NOT NULL"), EQUAL("="), NOT_EQUAL("<>"), //
+	LIKE("LIKE"), NOT_LIKE("NOT LIKE"), GREATER(">"), GREATER_EQUAL(">="), LESS("<"), //
+	LESS_EQUAL("<="), IN("IN"), NOT_IN("NOT IN");
 
 	String operator;
 
@@ -116,10 +117,6 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 
 	SEPARATOR(String separator) {
 	    this.separator = separator;
-	}
-
-	public String getSeparator() {
-	    return separator;
 	}
     }
 

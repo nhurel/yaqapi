@@ -2,6 +2,8 @@ package me.hurel.hqlbuilder.builder;
 
 import java.util.Collection;
 
+import me.hurel.hqlbuilder.functions.Function;
+import me.hurel.hqlbuilder.functions.Function.FUNCTION;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 import me.hurel.hqlbuilder.internal.ProxyUtil;
 
@@ -117,5 +119,29 @@ public class Yaqapi {
     public static UnfinishedSelectHibernateQueryBuilder selectDistinct(Object... methodCall) {
 	assert methodCall != null;
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
+    }
+
+    public static <T> Function<T> max(T methodCall) {
+	return new Function<T>(FUNCTION.MAX, methodCall);
+    }
+
+    public static <T> Function<T> min(T methodCall) {
+	return new Function<T>(FUNCTION.MIN, methodCall);
+    }
+
+    public static <T> Function<T> average(T methodCall) {
+	return new Function<T>(FUNCTION.AVERAGE, methodCall);
+    }
+
+    public static <T> Function<T> sum(T methodCall) {
+	return new Function<T>(FUNCTION.SUM, methodCall);
+    }
+
+    public static <T> Function<T> count(T methodCall) {
+	return new Function<T>(FUNCTION.COUNT, methodCall);
+    }
+
+    public static <T> Function<T> distinct(T methodCall) {
+	return new Function<T>(FUNCTION.DISTINCT, methodCall);
     }
 }

@@ -7,7 +7,7 @@ public class NullConditionHibernateQueryBuilder<T> extends ConditionHibernateQue
     }
 
     public NullConditionHibernateQueryBuilder(WhereHibernateQueryBuilder<T> where, boolean isNull) {
-	super(where, isNull ? OPERATOR.IS_NULL : OPERATOR.IS_NOT_NULL, null);
+	super(where, isNull ? OPERATOR.IS_NULL : OPERATOR.IS_NOT_NULL, (T) null);
     }
 
     @Override

@@ -52,4 +52,12 @@ public class WhereHibernateQueryBuilder<T> extends ConditionHibernateQueryBuilde
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_LIKE, entity));
     }
 
+    public ConditionHibernateQueryBuilder<T> isIn(T... values) {
+	return chain(new InConditionHibernateQueryBuilder<T>(this, OPERATOR.IN, values));
+    }
+
+    public ConditionHibernateQueryBuilder<T> isNotIn(T... values) {
+	return chain(new InConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_IN, values));
+    }
+
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.internal.ProxyUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +35,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	}
 	int i = select.aliases.length;
 	for (Object alias : select.aliases) {
-	    query.append(getAliasOrPath(alias));
+	    appendAliasOrPath(alias);
 	    if (--i > 0) {
 		query.append(',');
 	    }
@@ -60,15 +61,50 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	query.append(builder.operator).append(' ');
     }
 
+    public void visit(InConditionHibernateQueryBuilder<?> builder) {
+	query.append(builder.operator).append(" (");
+	if (builder.values != null) {
+	    int i = 1;
+	    for (Object value : builder.values) {
+		if (parentEntities.containsKey(value)) {
+		    appendAliasOrPath(value);
+		} else {
+		    query.append('?');
+		    addParameter(value);
+		}
+		if (i < builder.values.length) {
+		    query.append(", ");
+		}
+		i++;
+	    }
+	}
+	query.append(") ");
+    }
+
     public void visit(ConditionHibernateQueryBuilder<?> builder) {
 	query.append(builder.operator).append(' ');
 	if (parentEntities.containsKey(builder.value)) {
-	    query.append(getAliasOrPath(builder.value));
+	    appendAliasOrPath(builder.value);
 	} else {
 	    query.append('?');
 	    addParameter(builder.value);
 	}
 	query.append(' ');
+    }
+
+    private void appendAliasOrPath(Object entity) {
+	if (entity instanceof Function<?>) {
+	    Function<?> function = (Function<?>) entity;
+	    query.append(function.getName()).append('(');
+	    if (function.getEntity() instanceof Function<?>) {
+		appendAliasOrPath(function.getEntity());
+	    } else {
+		query.append(getAliasOrPath(function.getEntity()));
+	    }
+	    query.append(')');
+	} else {
+	    query.append(getAliasOrPath(entity));
+	}
     }
 
     private String getAliasOrPath(Object entity) {

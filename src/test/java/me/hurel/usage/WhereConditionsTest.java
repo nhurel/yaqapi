@@ -89,4 +89,20 @@ public class WhereConditionsTest {
 	assertThat(query.getParameters()).containsExactly(1);
     }
 
+    @Test
+    public void where_is_in_values() {
+	User user = queryOn(new User());
+	ConditionHibernateQueryBuilder<?> query = select(user).from(user).where(user.getAge()).isIn(1, 2, 3);
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.age IN (?, ?, ?) ");
+	assertThat(query.getParameters()).containsExactly(1, 2, 3);
+    }
+
+    @Test
+    public void where_is_not_in_aliases() {
+	User user = queryOn(new User());
+	ConditionHibernateQueryBuilder<?> query = select(user).from(user).where(user.getLastName()).isNotIn($(user.getChildren()).getLastName());
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.lastName NOT IN (user.children.lastName) ");
+	assertThat(query.getParameters()).isNull();
+    }
+
 }

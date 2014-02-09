@@ -6,9 +6,6 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
 
     boolean distinct = false;
 
-    UnfinishedSelectHibernateQueryBuilder() {
-    }
-
     UnfinishedSelectHibernateQueryBuilder(Object methodCall) {
 	this.aliases = new Object[] { methodCall };
     }
