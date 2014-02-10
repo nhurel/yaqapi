@@ -27,4 +27,8 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
 	return this;
     }
 
+    @Override
+    void accept(HQBVisitor visitor) {
+    }
+
 }

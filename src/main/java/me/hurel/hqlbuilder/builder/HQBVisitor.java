@@ -14,6 +14,12 @@ public interface HQBVisitor {
 
     public void visit(InConditionHibernateQueryBuilder<?> builder);
 
-    public void visit(WhereHibernateQueryBuilder<?> builder);
+    public void visit(WhereNullConditionHibernateQueryBuilder<?> builder);
+
+    public void visit(WhereInConditionHibernateQueryBuilder<?> builder);
+
+    public void visit(HavingHibernateQueryBuilder<?> builder);
+
+    public void visit(GroupByHibernateQueryBuilder groupByHibernateQueryBuilder);
 
 }

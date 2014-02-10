@@ -1,5 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder {
@@ -51,6 +52,14 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder {
 
     public <T> WhereHibernateQueryBuilder<T> where(T methodCall) {
 	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall));
+    }
+
+    public <T> WhereHibernateQueryBuilder<T> where(Function<T> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall));
+    }
+
+    public GroupByHibernateQueryBuilder groupBy(Object... properties) {
+	return chain(new GroupByHibernateQueryBuilder(this, properties));
     }
 
     enum JOIN {

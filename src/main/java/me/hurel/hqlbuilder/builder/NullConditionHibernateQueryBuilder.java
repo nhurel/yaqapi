@@ -2,12 +2,12 @@ package me.hurel.hqlbuilder.builder;
 
 public class NullConditionHibernateQueryBuilder<T> extends ConditionHibernateQueryBuilder<T> {
 
-    public NullConditionHibernateQueryBuilder(WhereHibernateQueryBuilder<T> where) {
+    public NullConditionHibernateQueryBuilder(HavingHibernateQueryBuilder<T> where) {
 	this(where, true);
     }
 
-    public NullConditionHibernateQueryBuilder(WhereHibernateQueryBuilder<T> where, boolean isNull) {
-	super(where, isNull ? OPERATOR.IS_NULL : OPERATOR.IS_NOT_NULL, (T) null);
+    public NullConditionHibernateQueryBuilder(HavingHibernateQueryBuilder<T> where, boolean isNull) {
+	super(where.root, isNull ? OPERATOR.IS_NULL : OPERATOR.IS_NOT_NULL, (T) null);
     }
 
     @Override
