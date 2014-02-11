@@ -1,8 +1,10 @@
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.GroupByClause;
+import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
 
-public class GroupByHibernateQueryBuilder extends HibernateQueryBuilder {
+public class GroupByHibernateQueryBuilder extends HibernateQueryBuilder implements GroupByClause {
 
     final Object[] properties;
 
@@ -11,12 +13,24 @@ public class GroupByHibernateQueryBuilder extends HibernateQueryBuilder {
 	this.properties = properties;
     }
 
-    public <T> WhereHibernateQueryBuilder<T> having(T property) {
-	return chain(new WhereHibernateQueryBuilder<T>(this.root, SEPARATOR.HAVING, property));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.GroupByClause#having(T)
+     */
+    public <T> WhereClause<T> having(T property) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.HAVING, property));
     }
 
-    public <T> WhereHibernateQueryBuilder<T> having(Function<T> property) {
-	return chain(new WhereHibernateQueryBuilder<T>(this.root, SEPARATOR.HAVING, property));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * me.hurel.hqlbuilder.builder.GroupByClause#having(me.hurel.hqlbuilder.
+     * functions.Function)
+     */
+    public <T> WhereClause<T> having(Function<T> property) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.HAVING, property));
     }
 
     @Override

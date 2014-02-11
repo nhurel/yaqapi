@@ -1,6 +1,8 @@
 package me.hurel.hqlbuilder.builder;
 
-public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implements HQBSelect {
+import me.hurel.hqlbuilder.SelectClause;
+
+public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implements SelectClause {
 
     Object[] aliases;
 

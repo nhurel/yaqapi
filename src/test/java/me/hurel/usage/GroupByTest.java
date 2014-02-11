@@ -3,7 +3,8 @@ package me.hurel.usage;
 import static me.hurel.hqlbuilder.builder.Yaqapi.*;
 import static org.fest.assertions.Assertions.*;
 import me.hurel.entity.User;
-import me.hurel.hqlbuilder.builder.HibernateQueryBuilder;
+import me.hurel.hqlbuilder.Condition;
+import me.hurel.hqlbuilder.QueryBuilder;
 
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class GroupByTest {
     @Test
     public void group_by_firstName_having_age() {
 	User user = queryOn(new User());
-	HibernateQueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5);
+	Condition<Integer> query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5);
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ? ");
 	assertThat(query.getParameters()).containsExactly(5);
@@ -35,8 +36,7 @@ public class GroupByTest {
     @Test
     public void group_by_firstName_having_age_and_firstName_not_null() {
 	User user = queryOn(new User());
-	HibernateQueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5).and(user.getFirstName())
-		.isNotNull();
+	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5).and(user.getFirstName()).isNotNull();
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ? AND user.firstName IS NOT NULL ");
 	assertThat(query.getParameters()).containsExactly(5);
@@ -45,7 +45,7 @@ public class GroupByTest {
     @Test
     public void where_group_by_age() {
 	User user = queryOn(new User());
-	HibernateQueryBuilder query = select(user).from(user).innerJoinFetch(user.getAdress()).where(user.getLastName()).isNotNull().groupBy(user.getFirstName())
+	QueryBuilder query = select(user).from(user).innerJoinFetch(user.getAdress()).where(user.getLastName()).isNotNull().groupBy(user.getFirstName())
 		.having(count(user.getAge())).isGreaterThan(5);
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo(

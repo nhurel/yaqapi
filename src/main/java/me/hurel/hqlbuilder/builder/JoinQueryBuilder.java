@@ -1,12 +1,14 @@
 package me.hurel.hqlbuilder.builder;
 
-public class JoinQueryBuilder extends AbstractFromQueryBuilder {
+import me.hurel.hqlbuilder.JoinClause;
+
+public class JoinQueryBuilder extends AbstractFromQueryBuilder implements JoinClause {
 
     JoinQueryBuilder(HibernateQueryBuilder root, JOIN join, Object object) {
 	super(root, join, object);
     }
 
-    public JoinQueryBuilder fetch() {
+    public JoinClause fetch() {
 	fetch = true;
 	return this;
     }

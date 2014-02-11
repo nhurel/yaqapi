@@ -58,28 +58,24 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	query.append(join.join).append(join.fetch ? " FETCH " : ' ').append(getReducedPath(join.object)).append(' ').append(aliases.get(join.object)).append(' ');
     }
 
-    public void visit(HavingHibernateQueryBuilder<?> builder) {
+    public void visit(WhereHibernateQueryBuilder<?> builder) {
 	query.append(builder.operator).append(' ');
+	if (builder.group) {
+	    query.append("( ");
+	}
 	appendReducedPath(builder.value);
 	query.append(' ');
     }
 
     public void visit(NullConditionHibernateQueryBuilder<?> builder) {
 	query.append(builder.operator).append(' ');
-    }
-
-    public void visit(WhereNullConditionHibernateQueryBuilder<?> builder) {
-	query.append(builder.operator).append(' ');
+	closeGroup(builder);
     }
 
     public void visit(InConditionHibernateQueryBuilder<?> builder) {
 	query.append(builder.operator);
 	visitIn(builder.values);
-    }
-
-    public void visit(WhereInConditionHibernateQueryBuilder<?> builder) {
-	query.append(builder.operator);
-	visitIn(builder.values);
+	closeGroup(builder);
     }
 
     private void visitIn(Object[] values) {
@@ -111,6 +107,13 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	    addParameter(builder.value);
 	}
 	query.append(' ');
+	closeGroup(builder);
+    }
+
+    private void closeGroup(ConditionHibernateQueryBuilder<?> builder) {
+	if (builder.closeGroup) {
+	    query.append(") ");
+	}
     }
 
     public void visit(GroupByHibernateQueryBuilder builder) {

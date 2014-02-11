@@ -1,66 +1,144 @@
 package me.hurel.hqlbuilder.builder;
 
-import me.hurel.hqlbuilder.builder.HibernateQueryBuilder.OPERATOR;
-import me.hurel.hqlbuilder.builder.HibernateQueryBuilder.SEPARATOR;
+import me.hurel.hqlbuilder.Condition;
+import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
 
-public class WhereHibernateQueryBuilder<T> extends HavingHibernateQueryBuilder<T> {
+public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder implements WhereClause<T> {
+    final Object value;
+
+    final String operator;
+
+    boolean group = false;
 
     WhereHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, T entity) {
-	super(root, separator, entity);
+	super(root);
+	this.value = entity;
+	this.operator = separator.separator;
     }
 
     WhereHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, Function<T> entity) {
-	super(root, separator, entity);
+	super(root);
+	this.value = entity;
+	this.operator = separator.separator;
     }
 
-    public WhereNullConditionHibernateQueryBuilder<T> isNull() {
-	return chain(new WhereNullConditionHibernateQueryBuilder<T>(this));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isNull()
+     */
+    public NullConditionHibernateQueryBuilder<T> isNull() {
+	return chain(new NullConditionHibernateQueryBuilder<T>(this));
 
     }
 
-    public WhereNullConditionHibernateQueryBuilder<T> isNotNull() {
-	return chain(new WhereNullConditionHibernateQueryBuilder<T>(this, false));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isNotNull()
+     */
+    public NullConditionHibernateQueryBuilder<T> isNotNull() {
+	return chain(new NullConditionHibernateQueryBuilder<T>(this, false));
     }
 
-    public ConditionHibernateQueryBuilder<T> isEqualTo(T entity) {
-	return chain(new ConditionHibernateQueryBuilder<T>(this.root, OPERATOR.EQUAL, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isEqualTo(T)
+     */
+    public Condition<T> isEqualTo(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.EQUAL, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isNotEqualTo(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.NOT_EQUAL, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isNotEqualTo(T)
+     */
+    public Condition<T> isNotEqualTo(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_EQUAL, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isGreaterThan(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.GREATER, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isGreaterThan(T)
+     */
+    public Condition<T> isGreaterThan(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.GREATER, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isGreaterEqualThan(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.GREATER_EQUAL, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isGreaterEqualThan(T)
+     */
+    public Condition<T> isGreaterEqualThan(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.GREATER_EQUAL, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isLessThan(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.LESS, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isLessThan(T)
+     */
+    public Condition<T> isLessThan(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LESS, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isLessEqualThan(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.LESS_EQUAL, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isLessEqualThan(T)
+     */
+    public Condition<T> isLessEqualThan(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LESS_EQUAL, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isLike(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.LIKE, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isLike(T)
+     */
+    public Condition<T> isLike(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LIKE, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isNotLike(T entity) {
-	return chain(new WhereConditionHibernateQueryBuilder<T>(this.root, OPERATOR.NOT_LIKE, entity));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isNotLike(T)
+     */
+    public Condition<T> isNotLike(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_LIKE, entity));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isIn(T... values) {
-	return chain(new WhereInConditionHibernateQueryBuilder<T>(this.root, OPERATOR.IN, values));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isIn(T)
+     */
+    public Condition<T> isIn(T... values) {
+	return chain(new InConditionHibernateQueryBuilder<T>(this, OPERATOR.IN, values));
     }
 
-    public WhereConditionHibernateQueryBuilder<T> isNotIn(T... values) {
-	return chain(new WhereInConditionHibernateQueryBuilder<T>(this.root, OPERATOR.NOT_IN, values));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.WhereCLause#isNotIn(T)
+     */
+    public Condition<T> isNotIn(T... values) {
+	return chain(new InConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_IN, values));
     }
 
+    public WhereHibernateQueryBuilder<T> group() {
+	this.group = true;
+	return this;
+    }
+
+    @Override
+    void accept(HQBVisitor visitor) {
+	visitor.visit(this);
+    }
 }

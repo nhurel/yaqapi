@@ -3,12 +3,13 @@ package me.hurel.hqlbuilder.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.hurel.hqlbuilder.QueryBuilder;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuilder {
+public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements QueryBuilder {
 
     /**
      * This list tracks the explicit joins that have been made
@@ -20,6 +21,27 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     private String queryString;
 
     private List<Object> parameters;
+
+    /**
+     * This list chains all the query parts that has been added
+     */
+    protected List<HibernateQueryBuilder> chain;
+
+    /**
+     * The only root element of the query
+     */
+    protected final HibernateQueryBuilder root;
+
+    <T extends HibernateQueryBuilder> T chain(T queryBuilder) {
+	if (this == root) {
+	    chain.add(queryBuilder);
+	} else {
+	    root.chain(queryBuilder);
+	}
+	return queryBuilder;
+    }
+
+    abstract void accept(HQBVisitor visitor);
 
     /**
      * Handler of the proxies. This handler knows the alias and all the paths in
@@ -34,7 +56,8 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
      *            the root element of the query
      */
     HibernateQueryBuilder(HibernateQueryBuilder root) {
-	super(root);
+	super();
+	this.root = root;
 	this.chain = root.chain;
 	this.invocationHandler = root.invocationHandler;
 	this.joinedEntities = root.joinedEntities;
@@ -44,32 +67,29 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
      * Constructor of the first part of the query
      */
     HibernateQueryBuilder() {
-	// this.root = this;
-	this.chain = new ArrayList<UnfinishedHibernateQueryBuilder>();
+	this.root = this;
+	this.chain = new ArrayList<HibernateQueryBuilder>();
 	this.joinedEntities = new ArrayList<Object>();
     }
 
-    /**
-     * Get the equivalent HQL query written through the API
-     * 
-     * @return
+    /* (non-Javadoc)
+     * @see me.hurel.hqlbuilder.builder.QueryBuilder#getQueryString()
      */
     public String getQueryString() {
 	ensureVisited();
 	return queryString;
     }
 
+    /* (non-Javadoc)
+     * @see me.hurel.hqlbuilder.builder.QueryBuilder#getParameters()
+     */
     public List<Object> getParameters() {
 	ensureVisited();
 	return parameters;
     }
 
-    /**
-     * Builds the Hibernate query which this object defines
-     * 
-     * @param session
-     *            the hibernate Session
-     * @return Query the built query with all parameters set
+    /* (non-Javadoc)
+     * @see me.hurel.hqlbuilder.builder.QueryBuilder#build(org.hibernate.Session)
      */
     public Query build(Session session) {
 	Query query = session.createQuery(getQueryString());
@@ -86,7 +106,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	if (!visited) {
 	    HQBQueryStringVisitor visitor = new HQBQueryStringVisitor(HQBInvocationHandler.getCurrentInvocationHandler().getAliases(), HQBInvocationHandler
 		    .getCurrentInvocationHandler().getPaths(), HQBInvocationHandler.getCurrentInvocationHandler().getParentsEntities(), joinedEntities);
-	    for (UnfinishedHibernateQueryBuilder builder : chain) {
+	    for (HibernateQueryBuilder builder : chain) {
 		builder.accept(visitor);
 	    }
 	    queryString = visitor.getQuery();

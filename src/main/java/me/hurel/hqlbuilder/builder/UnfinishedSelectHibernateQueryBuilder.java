@@ -1,6 +1,8 @@
 package me.hurel.hqlbuilder.builder;
 
-public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements HQBSelect {
+import me.hurel.hqlbuilder.SelectClause;
+
+public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements SelectClause {
 
     Object[] aliases;
 
@@ -25,10 +27,6 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
     public UnfinishedSelectHibernateQueryBuilder distinct() {
 	distinct = true;
 	return this;
-    }
-
-    @Override
-    void accept(HQBVisitor visitor) {
     }
 
 }
