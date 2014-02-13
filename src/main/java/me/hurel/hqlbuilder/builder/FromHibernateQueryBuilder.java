@@ -1,6 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
-import me.hurel.hqlbuilder.FromClause;
+import me.hurel.hqlbuilder.ExistsClause;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implements FromClause {
@@ -20,6 +20,25 @@ public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implemen
 	if (invocationHandler != null) {
 	    invocationHandler.reset();
 	}
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see me.hurel.hqlbuilder.builder.FromClause#whereExists(java.lang.Object)
+     */
+    public ExistsClause whereExists(Object methodCall) {
+	return chain(new ExistsHibernateQueryBuilder(this, methodCall));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * me.hurel.hqlbuilder.builder.FromClause#whereNotExists(java.lang.Object)
+     */
+    public ExistsClause whereNotExists(Object methodCall) {
+	return chain(new ExistsHibernateQueryBuilder(this, methodCall).not());
     }
 
     @Override

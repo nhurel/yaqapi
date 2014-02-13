@@ -1,8 +1,9 @@
 package me.hurel.hqlbuilder;
 
+import me.hurel.hqlbuilder.builder.FromClause;
 import me.hurel.hqlbuilder.functions.Function;
 
-public interface FromClause extends QueryBuilder {
+public interface AbstractFromClause extends QueryBuilder {
 
     public JoinClause innerJoin(Object methodCall);
 

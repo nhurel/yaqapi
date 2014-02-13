@@ -14,7 +14,12 @@ public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implement
 	chain(this);
     }
 
-    public FromHibernateQueryBuilder from(Object entity) {
+    SelectHibernateQueryBuilder(HibernateQueryBuilder root, Object... selects) {
+	super(root);
+	this.aliases = selects;
+    }
+
+    public FromClause from(Object entity) {
 	return chain(new FromHibernateQueryBuilder(this, JOIN.FROM, entity));
     }
 

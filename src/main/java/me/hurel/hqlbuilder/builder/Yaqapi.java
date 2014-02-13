@@ -2,7 +2,6 @@ package me.hurel.hqlbuilder.builder;
 
 import java.util.Collection;
 
-import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
 import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.functions.Function.FUNCTION;

@@ -48,6 +48,16 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	}
     }
 
+    public void visit(ExistsHibernateQueryBuilder exists) {
+	query.append("WHERE ");
+	if (exists.not) {
+	    query.append("NOT ");
+	}
+	query.append("EXISTS ( ");
+	visit((SelectHibernateQueryBuilder) exists);
+	from = false;
+    }
+
     public void visit(FromHibernateQueryBuilder fromClause) {
 	query.append(from ? ',' : fromClause.join).append(' ').append(ProxyUtil.getActualClass(fromClause.object.getClass()).getSimpleName()).append(' ')
 		.append(aliases.get(fromClause.object)).append(' ');
@@ -111,7 +121,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     private void closeGroup(ConditionHibernateQueryBuilder<?> builder) {
-	int group = builder.closeGroup;
+	int group = builder.closeGroup + builder.closeExists;
 	while (group-- > 0) {
 	    query.append(") ");
 	}

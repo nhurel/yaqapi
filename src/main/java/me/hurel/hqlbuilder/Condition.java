@@ -1,6 +1,7 @@
 package me.hurel.hqlbuilder;
 
 public interface Condition<T> extends QueryBuilder {
+
     public <U> WhereClause<U> and(U methodCall);
 
     public <U> WhereClause<U> or(U methodCall);
@@ -12,4 +13,6 @@ public interface Condition<T> extends QueryBuilder {
     public <U> WhereClause<U> andGroup(U methodCall);
 
     public Condition<T> closeGroup();
+
+    public Condition<T> closeExists();
 }

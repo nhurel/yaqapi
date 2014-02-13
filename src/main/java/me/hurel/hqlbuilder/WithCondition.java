@@ -1,6 +1,6 @@
 package me.hurel.hqlbuilder;
 
-public interface WithCondition<T> extends Condition<T>, FromClause {
+public interface WithCondition<T> extends Condition<T>, AbstractFromClause {
 
     public <U> WithClause<U> and(U methodCall);
 

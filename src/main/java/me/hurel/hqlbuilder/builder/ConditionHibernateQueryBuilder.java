@@ -12,6 +12,7 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
     final String operator;
 
     int closeGroup = 0;
+    int closeExists = 0;
 
     ConditionHibernateQueryBuilder(HibernateQueryBuilder root, OPERATOR operator, T value) {
 	super(root);
@@ -56,6 +57,11 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
 
     public WithCondition<T> closeGroup() {
 	this.closeGroup++;
+	return this;
+    }
+
+    public WithCondition<T> closeExists() {
+	this.closeExists++;
 	return this;
     }
 

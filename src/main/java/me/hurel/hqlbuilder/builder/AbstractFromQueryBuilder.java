@@ -1,12 +1,12 @@
 package me.hurel.hqlbuilder.builder;
 
-import me.hurel.hqlbuilder.FromClause;
+import me.hurel.hqlbuilder.AbstractFromClause;
 import me.hurel.hqlbuilder.GroupByClause;
 import me.hurel.hqlbuilder.JoinClause;
 import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
 
-public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder implements FromClause {
+public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder implements AbstractFromClause {
 
     AbstractFromQueryBuilder(HibernateQueryBuilder root) {
 	super(root);
