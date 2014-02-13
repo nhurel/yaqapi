@@ -3,7 +3,6 @@ package me.hurel.usage;
 import static me.hurel.hqlbuilder.builder.Yaqapi.*;
 import static org.fest.assertions.Assertions.*;
 import me.hurel.entity.User;
-import me.hurel.hqlbuilder.Condition;
 import me.hurel.hqlbuilder.QueryBuilder;
 
 import org.junit.Test;
@@ -27,7 +26,7 @@ public class GroupByTest {
     @Test
     public void group_by_firstName_having_age() {
 	User user = queryOn(new User());
-	Condition<Integer> query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5);
+	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5);
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ? ");
 	assertThat(query.getParameters()).containsExactly(5);

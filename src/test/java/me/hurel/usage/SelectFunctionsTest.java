@@ -13,8 +13,6 @@ public class SelectFunctionsTest {
 	User user = queryOn(new User());
 	String queryString = select(max(user.getAge())).from(user).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT max(user.age) FROM User user ");
-	// AVERAGE("avg"), COUNT("count"), DISTINCT("distinct"), MAX("max"),
-	// MIN("min"), SUM("sum");
     }
 
     @Test
