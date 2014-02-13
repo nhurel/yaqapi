@@ -1,9 +1,25 @@
 package me.hurel.hqlbuilder.builder;
 
-public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder {
+import me.hurel.hqlbuilder.FromClause;
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
-    FromHibernateQueryBuilder(HibernateQueryBuilder root, Object entity) {
-	super(root, JOIN.FROM, entity);
+public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implements FromClause {
+
+    Object object;
+
+    boolean fetch = false;
+
+    final String join;
+
+    FromHibernateQueryBuilder(HibernateQueryBuilder root, JOIN join, Object object) {
+	super(root);
+	this.join = join.getJunction();
+	this.object = object;
+	addJoinedEntity(object);
+	HQBInvocationHandler invocationHandler = HQBInvocationHandler.getCurrentInvocationHandler();
+	if (invocationHandler != null) {
+	    invocationHandler.reset();
+	}
     }
 
     @Override

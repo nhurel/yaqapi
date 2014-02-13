@@ -22,6 +22,10 @@ public interface FromClause extends QueryBuilder {
 
     public <T> WhereClause<T> where(Function<T> methodCall);
 
+    public <T> WhereClause<T> whereGroup(T methodCall);
+
+    public <T> WhereClause<T> whereGroup(Function<T> methodCall);
+
     public GroupByClause groupBy(Object... properties);
 
 }

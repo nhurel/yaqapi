@@ -2,6 +2,8 @@ package me.hurel.hqlbuilder.builder;
 
 import java.util.Collection;
 
+import me.hurel.hqlbuilder.FromClause;
+import me.hurel.hqlbuilder.SelectClause;
 import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.functions.Function.FUNCTION;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
@@ -59,7 +61,7 @@ public class Yaqapi {
      *            The entity to query on
      * @return
      */
-    public static FromHibernateQueryBuilder selectFrom(Object entity) {
+    public static FromClause selectFrom(Object entity) {
 	return new SelectHibernateQueryBuilder(entity).from(entity);
     }
 
@@ -70,7 +72,7 @@ public class Yaqapi {
      *            The entity to query on
      * @return
      */
-    public static FromHibernateQueryBuilder selectDistinctFrom(Object entity) {
+    public static FromClause selectDistinctFrom(Object entity) {
 	return new SelectHibernateQueryBuilder(entity).distinct().from(entity);
     }
 
@@ -81,7 +83,7 @@ public class Yaqapi {
      *            the property to get from the entity oe the entity
      * @return
      */
-    public static UnfinishedSelectHibernateQueryBuilder select(Object methodCall) {
+    public static SelectClause select(Object methodCall) {
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
     }
 
@@ -93,7 +95,7 @@ public class Yaqapi {
      *            the property to get from the entity or the entity
      * @return
      */
-    public static UnfinishedSelectHibernateQueryBuilder selectDistinct(Object methodCall) {
+    public static SelectClause selectDistinct(Object methodCall) {
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
     }
 
@@ -104,7 +106,7 @@ public class Yaqapi {
      *            the properties and entities to get
      * @return
      */
-    public static UnfinishedSelectHibernateQueryBuilder select(Object... methodCall) {
+    public static SelectClause select(Object... methodCall) {
 	assert methodCall != null;
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
     }
@@ -116,7 +118,7 @@ public class Yaqapi {
      *            the properties and entities to get
      * @return
      */
-    public static UnfinishedSelectHibernateQueryBuilder selectDistinct(Object... methodCall) {
+    public static SelectClause selectDistinct(Object... methodCall) {
 	assert methodCall != null;
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
     }

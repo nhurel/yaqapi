@@ -1,5 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
 
 public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements SelectClause {
@@ -16,7 +17,7 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
 	this.aliases = methodCall;
     }
 
-    public FromHibernateQueryBuilder from(Object entity) {
+    public FromClause from(Object entity) {
 	SelectHibernateQueryBuilder select = new SelectHibernateQueryBuilder(aliases);
 	if (distinct) {
 	    select = select.distinct();

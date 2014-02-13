@@ -1,6 +1,7 @@
 package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.SelectClause;
+import me.hurel.hqlbuilder.builder.AbstractFromQueryBuilder.JOIN;
 
 public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implements SelectClause {
 
@@ -14,7 +15,7 @@ public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implement
     }
 
     public FromHibernateQueryBuilder from(Object entity) {
-	return chain(new FromHibernateQueryBuilder(this, entity));
+	return chain(new FromHibernateQueryBuilder(this, JOIN.FROM, entity));
     }
 
     @Override

@@ -5,25 +5,11 @@ import me.hurel.hqlbuilder.GroupByClause;
 import me.hurel.hqlbuilder.JoinClause;
 import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
-import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder implements FromClause {
 
-    Object object;
-
-    boolean fetch = false;
-
-    final String join;
-
-    AbstractFromQueryBuilder(HibernateQueryBuilder root, JOIN join, Object object) {
+    AbstractFromQueryBuilder(HibernateQueryBuilder root) {
 	super(root);
-	this.join = join.getJunction();
-	this.object = object;
-	addJoinedEntity(object);
-	HQBInvocationHandler invocationHandler = HQBInvocationHandler.getCurrentInvocationHandler();
-	if (invocationHandler != null) {
-	    invocationHandler.reset();
-	}
     }
 
     /*
@@ -31,7 +17,7 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
      * 
      * @see me.hurel.hqlbuilder.builder.FromClause#innerJoin(java.lang.Object)
      */
-    public JoinQueryBuilder innerJoin(Object methodCall) {
+    public JoinClause innerJoin(Object methodCall) {
 	return chain(new JoinQueryBuilder(this, JOIN.INNER, methodCall));
     }
 
@@ -50,7 +36,7 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
      * 
      * @see me.hurel.hqlbuilder.builder.FromClause#leftJoin(java.lang.Object)
      */
-    public JoinQueryBuilder leftJoin(Object methodCall) {
+    public JoinClause leftJoin(Object methodCall) {
 	return chain(new JoinQueryBuilder(this, JOIN.LEFT, methodCall));
     }
 
@@ -69,7 +55,7 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
      * 
      * @see me.hurel.hqlbuilder.builder.FromClause#rightJoin(java.lang.Object)
      */
-    public JoinQueryBuilder rightJoin(Object methodCall) {
+    public JoinClause rightJoin(Object methodCall) {
 	return chain(new JoinQueryBuilder(this, JOIN.RIGHT, methodCall));
     }
 
@@ -89,7 +75,7 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
      * @see me.hurel.hqlbuilder.builder.FromClause#andFrom(java.lang.Object)
      */
     public FromClause andFrom(Object entity) {
-	return chain(new FromHibernateQueryBuilder(this, entity));
+	return chain(new FromHibernateQueryBuilder(this, JOIN.CARTESIAN, entity));
     }
 
     /*
@@ -110,6 +96,14 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
      */
     public <T> WhereClause<T> where(Function<T> methodCall) {
 	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall));
+    }
+
+    public <T> WhereClause<T> whereGroup(T methodCall) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall).group());
+    }
+
+    public <T> WhereClause<T> whereGroup(Function<T> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall).group());
     }
 
     /*

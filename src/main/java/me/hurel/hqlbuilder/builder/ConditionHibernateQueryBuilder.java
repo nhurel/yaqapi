@@ -2,15 +2,16 @@ package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.Condition;
 import me.hurel.hqlbuilder.GroupByClause;
-import me.hurel.hqlbuilder.WhereClause;
+import me.hurel.hqlbuilder.WithClause;
+import me.hurel.hqlbuilder.WithCondition;
 
-public class ConditionHibernateQueryBuilder<T> extends HibernateQueryBuilder implements Condition<T> {
+public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder implements Condition<T>, WithCondition<T> {
 
     final T value;
 
     final String operator;
 
-    boolean closeGroup = false;
+    int closeGroup = 0;
 
     ConditionHibernateQueryBuilder(HibernateQueryBuilder root, OPERATOR operator, T value) {
 	super(root);
@@ -23,7 +24,7 @@ public class ConditionHibernateQueryBuilder<T> extends HibernateQueryBuilder imp
      * 
      * @see me.hurel.hqlbuilder.builder.Condition#and(U)
      */
-    public <U> WhereClause<U> and(U methodCall) {
+    public <U> WithClause<U> and(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall));
     }
 
@@ -32,7 +33,7 @@ public class ConditionHibernateQueryBuilder<T> extends HibernateQueryBuilder imp
      * 
      * @see me.hurel.hqlbuilder.builder.Condition#or(U)
      */
-    public <U> WhereClause<U> or(U methodCall) {
+    public <U> WithClause<U> or(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall));
     }
 
@@ -45,16 +46,16 @@ public class ConditionHibernateQueryBuilder<T> extends HibernateQueryBuilder imp
 	return chain(new GroupByHibernateQueryBuilder(this, properties));
     }
 
-    public <U> WhereClause<U> orGroup(U methodCall) {
+    public <U> WithClause<U> orGroup(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall).group());
     }
 
-    public <U> WhereClause<U> andGroup(U methodCall) {
+    public <U> WithClause<U> andGroup(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
     }
 
-    public Condition<T> closeGroup() {
-	this.closeGroup = true;
+    public WithCondition<T> closeGroup() {
+	this.closeGroup++;
 	return this;
     }
 

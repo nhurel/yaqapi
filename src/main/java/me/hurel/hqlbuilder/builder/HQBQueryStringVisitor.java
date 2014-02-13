@@ -111,7 +111,8 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     private void closeGroup(ConditionHibernateQueryBuilder<?> builder) {
-	if (builder.closeGroup) {
+	int group = builder.closeGroup;
+	while (group-- > 0) {
 	    query.append(") ");
 	}
     }
