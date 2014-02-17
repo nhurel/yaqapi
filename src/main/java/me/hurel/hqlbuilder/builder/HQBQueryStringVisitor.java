@@ -24,6 +24,8 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
     private final List<Object> joinedEntities;
 
+    private int params = 1;
+
     List<Object> parameters;
 
     public HQBQueryStringVisitor(Map<Object, String> aliases, Map<Object, String> paths, Map<Object, Object> parentEntities, List<Object> joinedEntities) {
@@ -96,7 +98,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 		if (parentEntities.containsKey(value)) {
 		    appendAliasOrPath(value);
 		} else {
-		    query.append('?');
+		    query.append('?').append(params++);
 		    addParameter(value);
 		}
 		if (i < values.length) {
@@ -113,7 +115,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	if (parentEntities.containsKey(builder.value)) {
 	    appendAliasOrPath(builder.value);
 	} else {
-	    query.append('?');
+	    query.append('?').append(params++);
 	    addParameter(builder.value);
 	}
 	query.append(' ');

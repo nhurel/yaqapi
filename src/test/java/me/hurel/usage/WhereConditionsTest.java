@@ -29,7 +29,7 @@ public class WhereConditionsTest {
     public void where_is_equal() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isEqualTo("firstName");
-	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName = ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName = ?1 ");
 	assertThat(query.getParameters()).containsExactly("firstName");
     }
 
@@ -37,7 +37,7 @@ public class WhereConditionsTest {
     public void where_is_not_equal() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isNotEqualTo("firstName");
-	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName <> ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName <> ?1 ");
 	assertThat(query.getParameters()).containsExactly("firstName");
     }
 
@@ -45,7 +45,7 @@ public class WhereConditionsTest {
     public void where_is_like() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isLike("firstName%");
-	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName LIKE ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName LIKE ?1 ");
 	assertThat(query.getParameters()).containsExactly("firstName%");
     }
 
@@ -53,7 +53,7 @@ public class WhereConditionsTest {
     public void where_is_not_like() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isNotLike("firstName%");
-	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName NOT LIKE ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.firstName NOT LIKE ?1 ");
 	assertThat(query.getParameters()).containsExactly("firstName%");
     }
 
@@ -61,7 +61,7 @@ public class WhereConditionsTest {
     public void where_is_greater() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getAge()).from(user).where(user.getAge()).isGreaterThan(1);
-	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age > ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age > ?1 ");
 	assertThat(query.getParameters()).containsExactly(1);
     }
 
@@ -69,7 +69,7 @@ public class WhereConditionsTest {
     public void where_is_greaterEqual() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getAge()).from(user).where(user.getAge()).isGreaterEqualThan(1);
-	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age >= ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age >= ?1 ");
 	assertThat(query.getParameters()).containsExactly(1);
     }
 
@@ -77,7 +77,7 @@ public class WhereConditionsTest {
     public void where_is_less() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getAge()).from(user).where(user.getAge()).isLessThan(1);
-	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age < ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age < ?1 ");
 	assertThat(query.getParameters()).containsExactly(1);
     }
 
@@ -85,7 +85,7 @@ public class WhereConditionsTest {
     public void where_is_lessEqual() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getAge()).from(user).where(user.getAge()).isLessEqualThan(1);
-	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age <= ? ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user.age FROM User user WHERE user.age <= ?1 ");
 	assertThat(query.getParameters()).containsExactly(1);
     }
 
@@ -93,7 +93,7 @@ public class WhereConditionsTest {
     public void where_is_in_values() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).where(user.getAge()).isIn(1, 2, 3);
-	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.age IN (?, ?, ?) ");
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.age IN (?1, ?2, ?3) ");
 	assertThat(query.getParameters()).containsExactly(1, 2, 3);
     }
 

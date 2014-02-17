@@ -18,7 +18,7 @@ public class ExistsClause {
 		.and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
 	assertThat(query.getQueryString()).isEqualTo(
-		"SELECT city FROM City city WHERE EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ? AND adress.city.id = city.id ) ");
+		"SELECT city FROM City city WHERE EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ?1 AND adress.city.id = city.id ) ");
 
 	assertThat(query.getParameters()).containsExactly(5);
 
@@ -32,7 +32,7 @@ public class ExistsClause {
 		.and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
 	assertThat(query.getQueryString()).isEqualTo(
-		"SELECT city FROM City city WHERE NOT EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ? AND adress.city.id = city.id ) ");
+		"SELECT city FROM City city WHERE NOT EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ?1 AND adress.city.id = city.id ) ");
 
 	assertThat(query.getParameters()).containsExactly(5);
 
@@ -47,7 +47,7 @@ public class ExistsClause {
 
 	assertThat(query.getQueryString())
 		.isEqualTo(
-			"SELECT city FROM City city INNER JOIN city.country country WHERE EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ? AND adress.city.id = city.id ) ");
+			"SELECT city FROM City city INNER JOIN city.country country WHERE EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ?1 AND adress.city.id = city.id ) ");
 
 	assertThat(query.getParameters()).containsExactly(5);
 
@@ -62,7 +62,7 @@ public class ExistsClause {
 
 	assertThat(query.getQueryString())
 		.isEqualTo(
-			"SELECT city FROM City city WHERE city.country IS NOT NULL AND EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ? AND adress.city.id = city.id ) ");
+			"SELECT city FROM City city WHERE city.country IS NOT NULL AND EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ?1 AND adress.city.id = city.id ) ");
 
 	assertThat(query.getParameters()).containsExactly(5);
 
@@ -77,7 +77,7 @@ public class ExistsClause {
 
 	assertThat(query.getQueryString())
 		.isEqualTo(
-			"SELECT city FROM City city WHERE city.country IS NOT NULL OR NOT EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ? AND adress.city.id = city.id ) ");
+			"SELECT city FROM City city WHERE city.country IS NOT NULL OR NOT EXISTS ( SELECT user.id FROM User user INNER JOIN user.adress adress WHERE user.age < ?1 AND adress.city.id = city.id ) ");
 
 	assertThat(query.getParameters()).containsExactly(5);
 

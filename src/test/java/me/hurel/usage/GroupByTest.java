@@ -28,7 +28,7 @@ public class GroupByTest {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5);
 	String queryString = query.getQueryString();
-	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ? ");
+	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ?1 ");
 	assertThat(query.getParameters()).containsExactly(5);
     }
 
@@ -37,7 +37,7 @@ public class GroupByTest {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5).and(user.getFirstName()).isNotNull();
 	String queryString = query.getQueryString();
-	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ? AND user.firstName IS NOT NULL ");
+	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING user.age > ?1 AND user.firstName IS NOT NULL ");
 	assertThat(query.getParameters()).containsExactly(5);
     }
 
@@ -48,7 +48,7 @@ public class GroupByTest {
 		.having(count(user.getAge())).isGreaterThan(5);
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo(
-		"SELECT user FROM User user INNER JOIN FETCH user.adress adress WHERE user.lastName IS NOT NULL GROUP BY user.firstName HAVING count(user.age) > ? ");
+		"SELECT user FROM User user INNER JOIN FETCH user.adress adress WHERE user.lastName IS NOT NULL GROUP BY user.firstName HAVING count(user.age) > ?1 ");
 	assertThat(query.getParameters()).containsExactly(5);
     }
 }

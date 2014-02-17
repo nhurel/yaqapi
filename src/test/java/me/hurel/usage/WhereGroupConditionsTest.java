@@ -16,7 +16,7 @@ public class WhereGroupConditionsTest {
 		.isLike("20%").and(user.getAdress().getStreet()).isLike("Carnaby Street%").closeGroup();
 
 	assertThat(query.getQueryString()).isEqualTo(
-		"SELECT user FROM User user INNER JOIN user.adress adress WHERE adress.number >= ? OR ( adress.number LIKE ? AND adress.street LIKE ? ) ");
+		"SELECT user FROM User user INNER JOIN user.adress adress WHERE adress.number >= ?1 OR ( adress.number LIKE ?2 AND adress.street LIKE ?3 ) ");
 	assertThat(query.getParameters()).containsExactly("10", "20%", "Carnaby Street%");
 
     }
@@ -30,7 +30,7 @@ public class WhereGroupConditionsTest {
 
 	assertThat(query.getQueryString())
 		.isEqualTo(
-			"SELECT user FROM User user INNER JOIN user.adress adress WHERE adress.number >= ? OR ( adress.number LIKE ? AND ( adress.street LIKE ? OR adress.street LIKE ? ) ) ");
+			"SELECT user FROM User user INNER JOIN user.adress adress WHERE adress.number >= ?1 OR ( adress.number LIKE ?2 AND ( adress.street LIKE ?3 OR adress.street LIKE ?4 ) ) ");
 	assertThat(query.getParameters()).containsExactly("10", "20%", "Carnaby Street%", "Picadilly Circus%");
 
     }
@@ -44,7 +44,7 @@ public class WhereGroupConditionsTest {
 
 	assertThat(query.getQueryString())
 		.isEqualTo(
-			"SELECT user FROM User user INNER JOIN user.adress adress WHERE ( adress.number >= ? AND adress.city.country IS NULL ) OR ( adress.number LIKE ? AND ( adress.street LIKE ? OR adress.street LIKE ? ) ) ");
+			"SELECT user FROM User user INNER JOIN user.adress adress WHERE ( adress.number >= ?1 AND adress.city.country IS NULL ) OR ( adress.number LIKE ?2 AND ( adress.street LIKE ?3 OR adress.street LIKE ?4 ) ) ");
 	assertThat(query.getParameters()).containsExactly("10", "20%", "Carnaby Street%", "Picadilly Circus%");
 
     }

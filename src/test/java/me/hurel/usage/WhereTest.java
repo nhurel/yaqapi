@@ -21,7 +21,7 @@ public class WhereTest {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isEqualTo("toto");
 	String queryString = query.getQueryString();
-	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE user.firstName = ? ");
+	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE user.firstName = ?1 ");
 	assertThat(query.getParameters()).containsExactly("toto");
     }
 

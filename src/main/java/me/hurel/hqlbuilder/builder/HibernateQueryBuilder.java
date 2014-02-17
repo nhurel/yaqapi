@@ -108,12 +108,12 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	}
 	Query query = session.createQuery(getQueryString());
 	if (parameters != null) {
-	    int i = 0;
+	    int i = 1;
 	    for (Object parameter : parameters) {
 		if (LOGGER.isDebugEnabled()) {
 		    LOGGER.debug("setting parameter [{}] to value [{}]", i, parameter);
 		}
-		query.setParameter(i++, parameter);
+		query.setParameter(Integer.toString(i++), parameter);
 	    }
 	}
 	return query;
