@@ -28,7 +28,7 @@ public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implemen
      * @see me.hurel.hqlbuilder.builder.FromClause#whereExists(java.lang.Object)
      */
     public ExistsClause whereExists(Object methodCall) {
-	return chain(new ExistsHibernateQueryBuilder(this, methodCall));
+	return chain(new ExistsHibernateQueryBuilder(this, SEPARATOR.WHERE, methodCall));
     }
 
     /*
@@ -38,7 +38,7 @@ public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implemen
      * me.hurel.hqlbuilder.builder.FromClause#whereNotExists(java.lang.Object)
      */
     public ExistsClause whereNotExists(Object methodCall) {
-	return chain(new ExistsHibernateQueryBuilder(this, methodCall).not());
+	return chain(new ExistsHibernateQueryBuilder(this, SEPARATOR.WHERE, methodCall).not());
     }
 
     @Override

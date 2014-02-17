@@ -1,6 +1,9 @@
 package me.hurel.dao;
 
 import static me.hurel.hqlbuilder.builder.Yaqapi.*;
+
+import java.util.List;
+
 import me.hurel.entity.User;
 
 import org.hibernate.SessionFactory;
@@ -20,6 +23,32 @@ public class UserDao {
 	User user = queryOn(new User());
 	try {
 	    return (User) select(user).from(user).where(user.getFirstName()).isEqualTo(firstName).build(getSessionfactory().openSession()).uniqueResult();
+	} finally {
+	    getSessionfactory().getCurrentSession().close();
+	}
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<User> getUserHavingLittleChildren() {
+	User user = queryOn(new User());
+	User child = andQueryOn(new User());
+	try {
+	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child).where(child.getAge())
+		    .isLessEqualThan(2).and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
+	} finally {
+	    getSessionfactory().getCurrentSession().close();
+	}
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<User> getUserHavingChildrenHavingLittleChildren() {
+	User user = queryOn(new User());
+	User child = andQueryOn(new User());
+	User littleChild = andQueryOn(new User());
+	try {
+	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child)
+		    .whereExists(distinct(littleChild.getId())).from(littleChild).where(littleChild.getAge()).isLessEqualThan(2).and(littleChild.getFather().getId())
+		    .isEqualTo(child.getId()).closeExists().and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
 	} finally {
 	    getSessionfactory().getCurrentSession().close();
 	}

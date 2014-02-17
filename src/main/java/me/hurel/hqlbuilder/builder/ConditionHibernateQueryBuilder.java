@@ -1,6 +1,7 @@
 package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.Condition;
+import me.hurel.hqlbuilder.ExistsClause;
 import me.hurel.hqlbuilder.GroupByClause;
 import me.hurel.hqlbuilder.WithClause;
 import me.hurel.hqlbuilder.WithCondition;
@@ -53,6 +54,22 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
 
     public <U> WithClause<U> andGroup(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
+    }
+
+    public ExistsClause andExists(Object methodCall) {
+	return chain(new ExistsHibernateQueryBuilder(this, SEPARATOR.AND, methodCall));
+    }
+
+    public ExistsClause andNotExists(Object methodCall) {
+	return chain(new ExistsHibernateQueryBuilder(this, SEPARATOR.AND, methodCall).not());
+    }
+
+    public ExistsClause orExists(Object methodCall) {
+	return chain(new ExistsHibernateQueryBuilder(this, SEPARATOR.OR, methodCall));
+    }
+
+    public ExistsClause orNotExists(Object methodCall) {
+	return chain(new ExistsHibernateQueryBuilder(this, SEPARATOR.OR, methodCall).not());
     }
 
     public WithCondition<T> closeGroup() {

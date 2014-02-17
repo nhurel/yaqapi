@@ -30,6 +30,8 @@ public class User {
 
     private List<User> children;
 
+    private User father;
+
     public User() {
 	super();
     }
@@ -43,7 +45,7 @@ public class User {
 	this.age = age;
     }
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "father")
     public List<User> getChildren() {
 	return children;
     }
@@ -52,7 +54,7 @@ public class User {
 	this.children = children;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adress_id")
     public Adress getAdress() {
 	return adress;
@@ -78,6 +80,16 @@ public class User {
 
     public void setLastName(String lastName) {
 	this.lastName = lastName;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FATHER_ID")
+    public User getFather() {
+	return father;
+    }
+
+    public void setFather(User father) {
+	this.father = father;
     }
 
     @Id

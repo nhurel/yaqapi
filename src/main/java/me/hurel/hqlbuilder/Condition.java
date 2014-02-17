@@ -15,4 +15,12 @@ public interface Condition<T> extends QueryBuilder {
     public Condition<T> closeGroup();
 
     public Condition<T> closeExists();
+
+    public ExistsClause andExists(Object methodCall);
+
+    public ExistsClause andNotExists(Object methodCall);
+
+    public ExistsClause orExists(Object methodCall);
+
+    public ExistsClause orNotExists(Object methodCall);
 }

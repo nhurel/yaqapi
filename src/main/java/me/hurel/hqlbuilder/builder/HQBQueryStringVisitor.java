@@ -49,7 +49,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(ExistsHibernateQueryBuilder exists) {
-	query.append("WHERE ");
+	query.append(exists.separator).append(' ');
 	if (exists.not) {
 	    query.append("NOT ");
 	}

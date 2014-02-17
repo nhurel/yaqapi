@@ -6,8 +6,11 @@ public class ExistsHibernateQueryBuilder extends SelectHibernateQueryBuilder imp
 
     boolean not = false;
 
-    ExistsHibernateQueryBuilder(HibernateQueryBuilder root, Object objet) {
+    final String separator;
+
+    ExistsHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, Object objet) {
 	super(root, objet);
+	this.separator = separator.separator;
     }
 
     ExistsHibernateQueryBuilder not() {

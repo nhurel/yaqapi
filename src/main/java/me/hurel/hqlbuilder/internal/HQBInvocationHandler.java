@@ -16,11 +16,12 @@ import java.util.UUID;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HQBInvocationHandler implements MethodInterceptor {
 
-    private static final Logger LOGGER = Logger.getLogger(HQBInvocationHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HQBInvocationHandler.class);
 
     private static ThreadLocal<HQBInvocationHandler> instance = new ThreadLocal<HQBInvocationHandler>();
 

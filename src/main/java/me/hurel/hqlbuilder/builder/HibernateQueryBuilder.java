@@ -8,8 +8,12 @@ import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements QueryBuilder {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(HibernateQueryBuilder.class);
 
     /**
      * This list tracks the explicit joins that have been made
@@ -72,7 +76,9 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	this.joinedEntities = new ArrayList<Object>();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see me.hurel.hqlbuilder.builder.QueryBuilder#getQueryString()
      */
     public String getQueryString() {
@@ -80,7 +86,9 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	return queryString;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see me.hurel.hqlbuilder.builder.QueryBuilder#getParameters()
      */
     public List<Object> getParameters() {
@@ -88,14 +96,23 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	return parameters;
     }
 
-    /* (non-Javadoc)
-     * @see me.hurel.hqlbuilder.builder.QueryBuilder#build(org.hibernate.Session)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * me.hurel.hqlbuilder.builder.QueryBuilder#build(org.hibernate.Session)
      */
     public Query build(Session session) {
+	if (LOGGER.isDebugEnabled()) {
+	    LOGGER.debug(getQueryString());
+	}
 	Query query = session.createQuery(getQueryString());
 	if (parameters != null) {
 	    int i = 0;
 	    for (Object parameter : parameters) {
+		if (LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("setting parameter [{}] to value [{}]", i, parameter);
+		}
 		query.setParameter(i++, parameter);
 	    }
 	}
