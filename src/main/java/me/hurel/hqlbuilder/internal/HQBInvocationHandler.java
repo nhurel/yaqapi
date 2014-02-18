@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -103,7 +104,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		String fieldName = toPropertyName(method.getName());
 		currentPath.append('.').append(fieldName);
 		Class<?> returnType = method.getReturnType();
-		if (returnValue == null || returnType.isPrimitive()) {
+                if (returnValue == null || returnType.isPrimitive() || (!Enhancer.isEnhanced(returnValue.getClass()))) {
 		    returnValue = getReturnValue(returnType, method, fieldName);
 		    Class<?> objClass = getActualClass(obj.getClass());
 		    Field field = objClass.getDeclaredField(fieldName);
