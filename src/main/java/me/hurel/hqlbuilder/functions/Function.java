@@ -1,31 +1,13 @@
 package me.hurel.hqlbuilder.functions;
 
-public class Function<T> {
+public interface Function<T> {
 
-    private final String name;
+    public String getName();
 
-    private final T entity;
-
-    public Function(String name, T entity) {
-	super();
-	this.name = name;
-	this.entity = entity;
-    }
-
-    public Function(FUNCTION name, T entity) {
-	this(name.getFunction(), entity);
-    }
-
-    public String getName() {
-	return name;
-    }
-
-    public T getEntity() {
-	return entity;
-    }
+    public Object getEntity();
 
     public enum FUNCTION {
-	AVERAGE("avg"), COUNT("count"), DISTINCT("distinct"), MAX("max"), MIN("min"), SUM("sum");
+	AVERAGE("avg"), COUNT("count"), DISTINCT("distinct"), MAX("max"), MIN("min"), SUM("sum"), SIZE("size");
 	String function;
 
 	FUNCTION(String function) {

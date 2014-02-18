@@ -36,6 +36,14 @@ public class DaoTest {
     }
 
     @Test
+    public void test_query_on_dao_size_function() {
+	List<User> users = dao.getUserHavingChildren();
+	assertThat(users).isNotEmpty();
+	assertThat(users).hasSize(2);
+	assertThat(users).onProperty("firstName").containsOnly("grandfather", "titi");
+    }
+
+    @Test
     public void test_query_on_dao_exists() {
 	List<User> users = dao.getUserHavingLittleChildren();
 	assertThat(users).isNotEmpty();

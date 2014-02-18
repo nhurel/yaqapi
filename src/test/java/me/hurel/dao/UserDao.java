@@ -29,6 +29,17 @@ public class UserDao {
     }
 
     @SuppressWarnings("unchecked")
+    public List<User> getUserHavingChildren() {
+	User user = queryOn(new User());
+	try {
+	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).where(size(user.getChildren())).isGreaterEqualThan(1)
+		    .build(getSessionfactory().openSession()).list();
+	} finally {
+	    getSessionfactory().getCurrentSession().close();
+	}
+    }
+
+    @SuppressWarnings("unchecked")
     public List<User> getUserHavingLittleChildren() {
 	User user = queryOn(new User());
 	User child = andQueryOn(new User());

@@ -33,6 +33,15 @@ public class GroupByTest {
     }
 
     @Test
+    public void group_by_firstName_having_children() {
+	User user = queryOn(new User());
+	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(count(user.getChildren())).isGreaterThan(1);
+	String queryString = query.getQueryString();
+	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING count(user.children) > ?1 ");
+	assertThat(query.getParameters()).containsExactly(1);
+    }
+
+    @Test
     public void group_by_firstName_having_age_and_firstName_not_null() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(user.getAge()).isGreaterThan(5).and(user.getFirstName()).isNotNull();
