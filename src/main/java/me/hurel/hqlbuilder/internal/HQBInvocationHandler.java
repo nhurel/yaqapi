@@ -104,12 +104,9 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		String fieldName = toPropertyName(method.getName());
 		currentPath.append('.').append(fieldName);
 		Class<?> returnType = method.getReturnType();
-                if (returnValue == null || returnType.isPrimitive() || (!Enhancer.isEnhanced(returnValue.getClass()))) {
+		if (returnValue == null || returnType.isPrimitive() || (!Enhancer.isEnhanced(returnValue.getClass()))) {
 		    returnValue = getReturnValue(returnType, method, fieldName);
-		    Class<?> objClass = getActualClass(obj.getClass());
-		    Field field = objClass.getDeclaredField(fieldName);
-		    field.setAccessible(true);
-		    field.set(obj, returnValue);
+		    setProxiedField(obj, returnValue, fieldName);
 		    parentsEntities.put(returnValue, obj);
 		}
 		if (aliases.get(returnValue) != null) {
@@ -128,6 +125,13 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	    }
 	}
 	return returnValue;
+    }
+
+    private void setProxiedField(Object obj, Object returnValue, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+	Class<?> objClass = getActualClass(obj.getClass());
+	Field field = objClass.getDeclaredField(fieldName);
+	field.setAccessible(true);
+	field.set(obj, returnValue);
     }
 
     private Object getReturnValue(Class<?> returnType, Method method, String fieldName) throws InstantiationException, IllegalAccessException {
