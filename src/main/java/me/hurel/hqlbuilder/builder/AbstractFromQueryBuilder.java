@@ -3,6 +3,7 @@ package me.hurel.hqlbuilder.builder;
 import me.hurel.hqlbuilder.AbstractFromClause;
 import me.hurel.hqlbuilder.GroupByClause;
 import me.hurel.hqlbuilder.JoinClause;
+import me.hurel.hqlbuilder.OrderByClause;
 import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
 
@@ -113,6 +114,10 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
      */
     public GroupByClause groupBy(Object... properties) {
 	return chain(new GroupByHibernateQueryBuilder(this, properties));
+    }
+
+    public OrderByClause orderBy(Object... orders) {
+        return chain(new OrderByHibernateQueryBuilder(this, orders));
     }
 
     enum JOIN {
