@@ -35,10 +35,10 @@ public class GroupByTest {
     @Test
     public void group_by_firstName_having_children() {
 	User user = queryOn(new User());
-	QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(count(user.getChildren())).isGreaterThan(1);
+        QueryBuilder query = select(user.getFirstName()).from(user).groupBy(user.getFirstName()).having(count(user.getChildren())).isGreaterThan(1L);
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.firstName FROM User user GROUP BY user.firstName HAVING count(user.children) > ?1 ");
-	assertThat(query.getParameters()).containsExactly(1);
+        assertThat(query.getParameters()).containsExactly(1L);
     }
 
     @Test
@@ -54,10 +54,10 @@ public class GroupByTest {
     public void where_group_by_age() {
 	User user = queryOn(new User());
 	QueryBuilder query = select(user).from(user).innerJoinFetch(user.getAdress()).where(user.getLastName()).isNotNull().groupBy(user.getFirstName())
-		.having(count(user.getAge())).isGreaterThan(5);
+.having(count(user.getAge())).isGreaterThan(5L);
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo(
 		"SELECT user FROM User user INNER JOIN FETCH user.adress adress WHERE user.lastName IS NOT NULL GROUP BY user.firstName HAVING count(user.age) > ?1 ");
-	assertThat(query.getParameters()).containsExactly(5);
+        assertThat(query.getParameters()).containsExactly(5L);
     }
 }

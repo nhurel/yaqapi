@@ -6,6 +6,7 @@ import me.hurel.hqlbuilder.SelectClause;
 import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.functions.Function.FUNCTION;
 import me.hurel.hqlbuilder.functions.IntFunction;
+import me.hurel.hqlbuilder.functions.LongFunction;
 import me.hurel.hqlbuilder.functions.ParameterizedFunction;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 import me.hurel.hqlbuilder.internal.ProxyUtil;
@@ -140,8 +141,8 @@ public class Yaqapi {
 	return new ParameterizedFunction<T>(FUNCTION.SUM, methodCall);
     }
 
-    public static <T> IntFunction count(T methodCall) {
-	return new IntFunction(FUNCTION.COUNT, methodCall);
+    public static <T> LongFunction count(T methodCall) {
+        return new LongFunction(FUNCTION.COUNT, methodCall);
     }
 
     public static <T> IntFunction size(Collection<T> methodCall) {
