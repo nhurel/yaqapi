@@ -51,15 +51,18 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(OrderByHibernateQueryBuilder order) {
-        query.append("ORDER BY ");
-        int i = order.aliases.length;
-        for (Object alias : order.aliases) {
-            appendAliasOrPath(alias);
-            if (--i > 0) {
-                query.append(',');
-            }
-            query.append(' ');
-        }
+	query.append(order.separator).append(' ');
+	int i = order.aliases.length;
+	for (Object alias : order.aliases) {
+	    appendAliasOrPath(alias);
+	    if (--i > 0) {
+		query.append(',');
+	    }
+	    query.append(' ');
+	}
+	if (order.priority != null) {
+	    query.append(order.priority.priority).append(' ');
+	}
     }
 
     public void visit(ExistsHibernateQueryBuilder exists) {

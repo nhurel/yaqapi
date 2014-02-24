@@ -69,4 +69,18 @@ public class UserDao {
 	return sessionFactory;
     }
 
+    @SuppressWarnings("unchecked")
+    public String getUserNameHavingMaxChildren() {
+	User user = queryOn(new User());
+	List<Object[]> result = null;
+	try {
+	    result = select(user.getLastName(), count("*")).from(user).groupBy(user.getLastName()).orderBy(count("*")).desc().build(getSessionfactory().openSession()).list();
+	} finally {
+	    getSessionfactory().getCurrentSession().close();
+	}
+
+	return (String) result.get(0)[0]; // get the first colum of the first
+					  // result
+    }
+
 }

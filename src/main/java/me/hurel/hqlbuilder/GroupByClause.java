@@ -8,4 +8,6 @@ public interface GroupByClause extends QueryBuilder {
 
     public <T> WhereClause<T> having(Function<T> property);
 
+    public OrderByClause orderBy(Object... orders);
+
 }

@@ -1,6 +1,7 @@
 package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.GroupByClause;
+import me.hurel.hqlbuilder.OrderByClause;
 import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
 
@@ -31,6 +32,10 @@ public class GroupByHibernateQueryBuilder extends HibernateQueryBuilder implemen
      */
     public <T> WhereClause<T> having(Function<T> property) {
 	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.HAVING, property));
+    }
+
+    public OrderByClause orderBy(Object... orders) {
+	return chain(new OrderByHibernateQueryBuilder(this, SEPARATOR.ORDER_BY, orders));
     }
 
     @Override

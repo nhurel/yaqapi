@@ -60,4 +60,11 @@ public class DaoTest {
 	assertThat(users).onProperty("firstName").containsExactly("grandfather");
     }
 
+    @Test
+    public void test_query_on_dao_order_by_count() {
+	String familyName = dao.getUserNameHavingMaxChildren();
+	assertThat(familyName).isNotEmpty();
+	assertThat(familyName).isEqualTo("toto");
+    }
+
 }

@@ -148,7 +148,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     }
 
     enum SEPARATOR {
-	WHERE("WHERE"), WITH("WITH"), AND("AND"), OR("OR"), HAVING("HAVING");
+	WHERE("WHERE"), WITH("WITH"), AND("AND"), OR("OR"), HAVING("HAVING"), ORDER_BY("ORDER BY"), COMMA(",");
 
 	String separator;
 

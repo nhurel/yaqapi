@@ -117,7 +117,7 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
     }
 
     public OrderByClause orderBy(Object... orders) {
-        return chain(new OrderByHibernateQueryBuilder(this, orders));
+	return chain(new OrderByHibernateQueryBuilder(this, SEPARATOR.ORDER_BY, orders));
     }
 
     enum JOIN {
