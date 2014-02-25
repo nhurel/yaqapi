@@ -1,5 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
 import me.hurel.hqlbuilder.builder.AbstractFromQueryBuilder.JOIN;
 

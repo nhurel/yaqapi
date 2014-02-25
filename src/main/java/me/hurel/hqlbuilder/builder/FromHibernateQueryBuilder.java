@@ -1,6 +1,7 @@
 package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.ExistsClause;
+import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implements FromClause {

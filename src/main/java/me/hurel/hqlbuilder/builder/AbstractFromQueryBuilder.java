@@ -1,6 +1,7 @@
 package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.AbstractFromClause;
+import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.GroupByClause;
 import me.hurel.hqlbuilder.JoinClause;
 import me.hurel.hqlbuilder.OrderByClause;

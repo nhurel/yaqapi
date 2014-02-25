@@ -1,5 +1,6 @@
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
 
 public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements SelectClause {

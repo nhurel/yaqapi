@@ -1,8 +1,5 @@
-package me.hurel.hqlbuilder.builder;
+package me.hurel.hqlbuilder;
 
-import me.hurel.hqlbuilder.AbstractFromClause;
-import me.hurel.hqlbuilder.ExistsClause;
-import me.hurel.hqlbuilder.OrderByClause;
 
 public interface FromClause extends AbstractFromClause {
 

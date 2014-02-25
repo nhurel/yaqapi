@@ -1,6 +1,5 @@
 package me.hurel.hqlbuilder;
 
-import me.hurel.hqlbuilder.builder.FromClause;
 import me.hurel.hqlbuilder.functions.Function;
 
 public interface JoinClause extends FromClause {
