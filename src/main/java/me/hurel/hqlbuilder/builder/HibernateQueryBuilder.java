@@ -129,6 +129,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	    queryString = visitor.getQuery();
 	    parameters = visitor.getParameters();
 	}
+	visited = true;
     }
 
     void addJoinedEntity(Object entity) {
