@@ -8,7 +8,7 @@ import me.hurel.hqlbuilder.QueryBuilder;
 
 import org.junit.Test;
 
-public class ExistsClause {
+public class ExistsClauseTest {
 
     @Test
     public void where_exists() {
