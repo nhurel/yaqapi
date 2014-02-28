@@ -50,6 +50,13 @@ public class OrderByTest {
     }
 
     @Test
+    public void order_by_multiple_fields() {
+	User user = queryOn(new User());
+	OrderByClause query = select(user).from(user).orderBy(user.getLastName(), user.getFirstName());
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user ORDER BY user.lastName, user.firstName ");
+    }
+
+    @Test
     public void order_by_desc() {
 	User user = queryOn(new User());
 	OrderByClause query = select(user).from(user).orderBy(user.getLastName()).desc();

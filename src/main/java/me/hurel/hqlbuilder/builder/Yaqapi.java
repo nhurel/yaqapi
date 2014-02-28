@@ -9,6 +9,7 @@ import me.hurel.hqlbuilder.functions.Function.FUNCTION;
 import me.hurel.hqlbuilder.functions.IntFunction;
 import me.hurel.hqlbuilder.functions.LongFunction;
 import me.hurel.hqlbuilder.functions.ParameterizedFunction;
+import me.hurel.hqlbuilder.helpers.CollectionHelper;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 import me.hurel.hqlbuilder.internal.ProxyUtil;
 
@@ -54,6 +55,9 @@ public class Yaqapi {
      */
     @SuppressWarnings("unchecked")
     public static <T, U extends T> U $(Collection<T> methodCall) {
+	if (methodCall instanceof CollectionHelper<?>) {
+	    return (U) ((CollectionHelper<?>) methodCall).getObject();
+	}
 	return (U) methodCall;
     }
 
@@ -143,7 +147,7 @@ public class Yaqapi {
     }
 
     public static <T> LongFunction count(T methodCall) {
-        return new LongFunction(FUNCTION.COUNT, methodCall);
+	return new LongFunction(FUNCTION.COUNT, methodCall);
     }
 
     public static <T> IntFunction size(Collection<T> methodCall) {

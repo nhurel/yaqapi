@@ -2,7 +2,9 @@ package me.hurel.hqlbuilder.internal;
 
 import static me.hurel.hqlbuilder.internal.ProxyUtil.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import me.hurel.hqlbuilder.helpers.CollectionHelper;
+import me.hurel.hqlbuilder.helpers.MapHelper;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -87,7 +91,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	} else {
 	    returnValue = proxy.invokeSuper(obj, args);
 	}
-	if (isGetter(method.getName())) {
+	if (!ignoreClass(getActualClass(obj.getClass())) && isGetter(method.getName())) {
 	    try {
 		if (lastEntity == null || !obj.equals(lastEntity)) {
 		    historise();
@@ -116,6 +120,9 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		}
 		lastEntity = returnValue;
 		paths.put(returnValue, getCurrentPath());
+		if (returnValue instanceof CollectionHelper<?>) {
+		    paths.put(((CollectionHelper<?>) returnValue).getObject(), getCurrentPath());
+		}
 		return returnValue;
 	    } catch (Throwable t) {
 		LOGGER.error("", t);
@@ -134,22 +141,71 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	field.set(obj, returnValue);
     }
 
-    private Object getReturnValue(Class<?> returnType, Method method, String fieldName) throws InstantiationException, IllegalAccessException {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private Object getReturnValue(Class<?> returnType, Method method, String fieldName) throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+	    InvocationTargetException {
 	Object returnValue;
 	if (Collection.class.isAssignableFrom(returnType)) {
+	    Class<?> parameterType = getParameter(method);
+	    if (isFinal(parameterType)) {
+		returnValue = instanciateType(returnType, parameterType);
+		returnValue = new CollectionHelper(returnValue);
+		return returnValue;
+	    }
 	    returnValue = buildProxy(getParameter(method), returnType, this);
 	    declareAlias(returnValue, fieldName);
-	} else if (returnType.isInterface()) {
-	    returnValue = buildProxy(null, returnType, this);
+	} else if (Map.class.isAssignableFrom(returnType)) {
+	    returnValue = buildProxy(new MapHelper(), returnType, this);
 	} else {
 	    if (returnType.isPrimitive() || returnType.getCanonicalName().startsWith("java.lang")) {
 		returnValue = random(returnType);
 	    } else {
-		returnValue = returnType.newInstance();
-		returnValue = buildProxy(returnValue, returnType, this);
+		returnValue = instanciateType(returnType);
 	    }
 	}
+	return returnValue;
+    }
 
+    private Object instanciateType(Class<?> returnType) {
+	Object returnValue;
+	try {
+	    returnValue = returnType.newInstance();
+	    returnValue = buildProxy(returnValue, returnType, this);
+	} catch (Exception e) {
+	    returnValue = null;
+	    Constructor<?> constructor = findBestConstructor(returnType.getConstructors());
+	    if (constructor == null) {
+		throw new RuntimeException("Can't instanciate object of class [" + returnType.getCanonicalName() + "]");
+	    }
+	    Class<?>[] parameterTypes = constructor.getParameterTypes();
+	    Object[] params = new Object[parameterTypes.length];
+	    int i = 0;
+	    for (Class<?> parameterType : parameterTypes) {
+		params[i++] = random(parameterType);
+	    }
+	    returnValue = buildProxy(returnValue, returnType, this, parameterTypes, params);
+	}
+	return returnValue;
+    }
+
+    private Object instanciateType(Class<?> returnType, Class<?> parameterType) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+	Object returnValue;
+	try {
+	    returnValue = returnType.newInstance();
+	} catch (Exception e) {
+	    returnValue = null;
+	    Constructor<?> constructor = findBestConstructor(parameterType.getConstructors());
+	    if (constructor == null) {
+		throw new RuntimeException("Can't instanciate object of class [" + returnType.getCanonicalName() + "]");
+	    }
+	    Class<?>[] parameterTypes = constructor.getParameterTypes();
+	    Object[] params = new Object[parameterTypes.length];
+	    int i = 0;
+	    for (Class<?> pType : parameterTypes) {
+		params[i++] = random(pType);
+	    }
+	    returnValue = constructor.newInstance(params);
+	}
 	return returnValue;
     }
 
@@ -198,6 +254,9 @@ public class HQBInvocationHandler implements MethodInterceptor {
     private void historise() {
 	if (started) {
 	    paths.put(lastEntity, getCurrentPath());
+	    if (lastEntity instanceof CollectionHelper<?>) {
+		paths.put(((CollectionHelper<?>) lastEntity).getObject(), getCurrentPath());
+	    }
 	    fullPathHistory.add(getCurrentPath());
 	    aliasesHistory.add(getCurrentAlias());
 	}

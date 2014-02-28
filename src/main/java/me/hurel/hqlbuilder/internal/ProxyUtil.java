@@ -1,6 +1,8 @@
 package me.hurel.hqlbuilder.internal;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 
 import net.sf.cglib.core.ReflectUtils;
@@ -13,6 +15,10 @@ public class ProxyUtil {
     public static Class<?> getParameter(Method method) {
 	Class<?> result = (Class<?>) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
 	return result;
+    }
+
+    public static boolean isFinal(Class<?> objectClass) {
+	return (Modifier.FINAL & objectClass.getModifiers()) == Modifier.FINAL;
     }
 
     public static String toAlias(Class<?> entity) {
@@ -30,6 +36,50 @@ public class ProxyUtil {
 	return method.startsWith("get") || method.startsWith("is");
     }
 
+    public static boolean ignoreClass(Class<?> objectClass) {
+	return objectClass.getCanonicalName().startsWith("java.");
+    }
+
+    public static Constructor<?> findBestConstructor(Constructor<?>[] constructors) {
+	// First try : find a constructor with only primitive arguments
+	for (Constructor<?> c : constructors) {
+	    Class<?>[] parameterTypes = c.getParameterTypes();
+	    if (parameterTypes.length == 0) {
+		return c;
+	    } else {
+		boolean useConstructor = true;
+		for (Class<?> parameterType : parameterTypes) {
+		    if (!parameterType.isPrimitive()) {
+			useConstructor = false;
+			break;
+		    }
+		}
+		if (useConstructor) {
+		    return c;
+		}
+	    }
+	}
+	// Second try : Okay, let's give a chance to String parameters too
+	for (Constructor<?> c : constructors) {
+	    Class<?>[] parameterTypes = c.getParameterTypes();
+	    if (parameterTypes.length == 0) {
+		return c;
+	    } else {
+		boolean useConstructor = true;
+		for (Class<?> parameterType : parameterTypes) {
+		    if (!parameterType.isPrimitive() && !parameterType.equals(String.class)) {
+			useConstructor = false;
+			break;
+		    }
+		}
+		if (useConstructor) {
+		    return c;
+		}
+	    }
+	}
+	return null;
+    }
+
     public static Class<?> getActualClass(Class<?> objectClass) {
 	Class<?> actualClass = objectClass;
 	if (Enhancer.isEnhanced(actualClass)) {
@@ -43,15 +93,19 @@ public class ProxyUtil {
     }
 
     public static <T> T buildProxy(T entity, Class<?> returnType, HQBInvocationHandler handler) {
-	return buildProxy(entity, returnType, null, handler);
+	return buildProxy(entity, returnType, null, handler, null, null);
+    }
+
+    public static <T> T buildProxy(T entity, Class<?> returnType, HQBInvocationHandler handler, Class<?>[] paramTypes, Object[] params) {
+	return buildProxy(entity, returnType, null, handler, paramTypes, params);
     }
 
     public static <T> T buildProxy(Class<?> returnType, Class<?> implementation, HQBInvocationHandler handler) {
-	return buildProxy(null, returnType, implementation, handler);
+	return buildProxy(null, returnType, implementation, handler, null, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T buildProxy(T entity, Class<?> returnType, Class<?> implementation, HQBInvocationHandler handler) {
+    public static <T> T buildProxy(T entity, Class<?> returnType, Class<?> implementation, HQBInvocationHandler handler, Class<?>[] paramTypes, Object[] params) {
 	T o = entity;
 	if (entity == null || !Enhancer.isEnhanced(entity.getClass())) {
 	    Enhancer e = new Enhancer();
@@ -64,7 +118,11 @@ public class ProxyUtil {
 	    }
 	    e.setCallback(handler);
 	    e.setUseFactory(true);
-	    o = (T) e.create();
+	    if (paramTypes == null) {
+		o = (T) e.create();
+	    } else {
+		o = (T) e.create(paramTypes, params);
+	    }
 	}
 	handler.declareAlias(o);
 	return o;
