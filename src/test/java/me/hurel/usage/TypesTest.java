@@ -51,4 +51,18 @@ public class TypesTest {
 	assertThat(queryString).isEqualTo("SELECT car.someList FROM Car car WHERE car.someList = ?1 ");
     }
 
+    @Test
+    public void select_boolean_where_boolean() {
+	Car car = queryOn(new Car());
+	String queryString = select(car.isHybrid()).from(car).where(car.isHybrid()).isEqualTo(true).getQueryString();
+	assertThat(queryString).isEqualTo("SELECT car.hybrid FROM Car car WHERE car.hybrid = ?1 ");
+    }
+
+    @Test
+    public void select_boolean_where_booleanProperty() {
+	Car car = queryOn(new Car());
+	String queryString = select(car.isHybrid()).from(car).where(car.isHybrid()).isEqualTo(car.isHybrid()).getQueryString();
+	assertThat(queryString).isEqualTo("SELECT car.hybrid FROM Car car WHERE car.hybrid = car.hybrid ");
+    }
+
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 import me.hurel.hqlbuilder.QueryBuilder;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
+import me.hurel.hqlbuilder.internal.ProxyUtil;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -51,6 +52,18 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	    root.chain(queryBuilder);
 	}
 	return queryBuilder;
+    }
+
+    protected Object getAliasedObject(Object entity) {
+	Object value = null;
+	if (entity != null) {
+	    if (ProxyUtil.usePrimitive(entity)) {
+		value = HQBInvocationHandler.getCurrentInvocationHandler().poll(entity);
+	    } else {
+		value = entity;
+	    }
+	}
+	return value;
     }
 
     abstract void accept(HQBVisitor visitor);

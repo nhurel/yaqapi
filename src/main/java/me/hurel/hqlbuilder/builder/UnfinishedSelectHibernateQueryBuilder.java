@@ -10,6 +10,7 @@ package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQueryBuilder implements SelectClause {
 
@@ -18,15 +19,16 @@ public class UnfinishedSelectHibernateQueryBuilder extends UnfinishedHibernateQu
     boolean distinct = false;
 
     UnfinishedSelectHibernateQueryBuilder(Object methodCall) {
-	this.aliases = new Object[] { methodCall };
+	this.aliases = HQBInvocationHandler.getCurrentInvocationHandler().poll(new Object[] { methodCall });
     }
 
     UnfinishedSelectHibernateQueryBuilder(Object... methodCall) {
-	this.aliases = methodCall;
+	this.aliases = HQBInvocationHandler.getCurrentInvocationHandler().poll(methodCall);
     }
 
     public FromClause from(Object entity) {
-	SelectHibernateQueryBuilder select = new SelectHibernateQueryBuilder(aliases);
+	SelectHibernateQueryBuilder select = new SelectHibernateQueryBuilder();
+	select.aliases = aliases;
 	if (distinct) {
 	    select = select.distinct();
 	}

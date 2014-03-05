@@ -29,6 +29,10 @@ public class ProxyUtil {
 	return (Modifier.FINAL & objectClass.getModifiers()) == Modifier.FINAL;
     }
 
+    public static boolean usePrimitive(Object o) {
+	return boolean.class.equals(o.getClass()) || o instanceof Boolean;
+    }
+
     public static String toAlias(Class<?> entity) {
 	return StringUtils.uncapitalize(entity.getSimpleName());
     }
@@ -125,6 +129,7 @@ public class ProxyUtil {
 		e.setInterfaces(new Class[] { implementation });
 	    }
 	    e.setCallback(handler);
+
 	    e.setUseFactory(true);
 	    if (paramTypes == null) {
 		o = (T) e.create();

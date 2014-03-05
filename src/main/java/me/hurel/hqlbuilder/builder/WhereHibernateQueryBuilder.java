@@ -22,7 +22,7 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
 
     WhereHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, T entity) {
 	super(root);
-	this.value = entity;
+	this.value = getAliasedObject(entity);
 	this.operator = separator.separator;
     }
 

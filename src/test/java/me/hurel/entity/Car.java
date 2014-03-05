@@ -37,6 +37,8 @@ public class Car {
 
     private Map<String, String> someMap;
 
+    private Boolean hybrid;
+
     public Car() {
 	super();
     }
@@ -93,6 +95,14 @@ public class Car {
 
     public void setSomeList(List<String> someList) {
 	this.someList = someList;
+    }
+
+    public Boolean isHybrid() {
+	return hybrid;
+    }
+
+    public void setHybrid(Boolean hybrid) {
+	this.hybrid = hybrid;
     }
 
 }

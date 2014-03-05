@@ -17,7 +17,7 @@ import me.hurel.hqlbuilder.functions.Function;
 
 public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder implements Condition<T>, WithCondition<T> {
 
-    final T value;
+    final Object value;
 
     final String operator;
 
@@ -26,7 +26,7 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
 
     ConditionHibernateQueryBuilder(HibernateQueryBuilder root, OPERATOR operator, T value) {
 	super(root);
-	this.value = value;
+	this.value = getAliasedObject(value);
 	this.operator = operator.operator;
     }
 
@@ -40,7 +40,7 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
     }
 
     public <U> WithClause<U> and(Function<U> methodCall) {
-        return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall));
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall));
     }
 
     /*
@@ -53,7 +53,7 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
     }
 
     public <U> WithClause<U> or(Function<U> methodCall) {
-        return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall));
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall));
     }
 
     /*
@@ -68,16 +68,17 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
     public <U> WithClause<U> orGroup(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall).group());
     }
+
     public <U> WithClause<U> orGroup(Function<U> methodCall) {
-        return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall).group());
-        }
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall).group());
+    }
 
     public <U> WithClause<U> andGroup(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
     }
 
     public <U> WithClause<U> andGroup(Function<U> methodCall) {
-        return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
     }
 
     public ExistsClause andExists(Object methodCall) {

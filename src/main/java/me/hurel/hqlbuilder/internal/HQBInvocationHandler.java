@@ -14,13 +14,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 import me.hurel.hqlbuilder.helpers.CollectionHelper;
@@ -54,17 +53,15 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     private Object lastEntity;
 
-    private List<String> fullPathHistory;
-
-    private List<String> aliasesHistory;
-
     private boolean started = false;
+
+    private Object primitiveAliasedObject;
+
+    private Deque<Object> primitiveHistory = new ArrayDeque<Object>();
 
     public HQBInvocationHandler() {
 	super();
 	reset();
-	fullPathHistory = new ArrayList<String>();
-	aliasesHistory = new ArrayList<String>();
 	instance.set(this);
     }
 
@@ -92,6 +89,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
     }
 
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+	primitiveAliasedObject = null;
 	Object returnValue;
 	if (method.getName().equals("equals") && args.length == 1) {
 	    // Equals of the proxied entities must be safe
@@ -119,7 +117,11 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		if (returnValue == null || returnType.isPrimitive() || (!Enhancer.isEnhanced(returnValue.getClass()))) {
 		    returnValue = getReturnValue(returnType, method, fieldName);
 		    setProxiedField(obj, returnValue, fieldName);
-		    parentsEntities.put(returnValue, obj);
+		    if (primitiveAliasedObject != null) {
+			parentsEntities.put(primitiveAliasedObject, obj);
+		    } else {
+			parentsEntities.put(returnValue, obj);
+		    }
 		}
 		if (aliases.get(returnValue) != null) {
 		    currentAlias = aliases.get(returnValue);
@@ -127,9 +129,14 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		    currentAlias = fieldName;
 		}
 		lastEntity = returnValue;
-		paths.put(returnValue, getCurrentPath());
-		if (returnValue instanceof CollectionHelper<?>) {
-		    paths.put(((CollectionHelper<?>) returnValue).getObject(), getCurrentPath());
+		if (primitiveAliasedObject != null) {
+		    paths.put(primitiveAliasedObject, getCurrentPath());
+		    primitiveHistory.add(primitiveAliasedObject);
+		} else {
+		    paths.put(returnValue, getCurrentPath());
+		    if (returnValue instanceof CollectionHelper<?>) {
+			paths.put(((CollectionHelper<?>) returnValue).getObject(), getCurrentPath());
+		    }
 		}
 		return returnValue;
 	    } catch (Throwable t) {
@@ -226,12 +233,11 @@ public class HQBInvocationHandler implements MethodInterceptor {
     private long lastLong = Long.MIN_VALUE;
     private short lastShort = Short.MIN_VALUE;
 
-    Random r = new Random();
-
     private Object random(Class<?> randomizeType) {
 	if (String.class.equals(randomizeType)) {
 	    return UUID.randomUUID().toString();
 	} else if (boolean.class.equals(randomizeType) || Boolean.class.equals(randomizeType)) {
+	    primitiveAliasedObject = new Object();
 	    lastBoolean = !lastBoolean;
 	    // TODO LOG WARN ABOUT BOOLEAN SUPPORT
 	    return lastBoolean;
@@ -265,8 +271,6 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	    if (lastEntity instanceof CollectionHelper<?>) {
 		paths.put(((CollectionHelper<?>) lastEntity).getObject(), getCurrentPath());
 	    }
-	    fullPathHistory.add(getCurrentPath());
-	    aliasesHistory.add(getCurrentAlias());
 	}
 	reset();
     }
@@ -289,6 +293,25 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     public String getCurrentAlias() {
 	return currentAlias;
+    }
+
+    public Object poll(Object current) {
+	if (primitiveHistory.isEmpty()) {
+	    return current;
+	}
+	return primitiveHistory.pollLast();
+    }
+
+    public Object[] poll(Object[] inputs) {
+	Object[] objects = new Object[inputs.length];
+	for (int i = inputs.length - 1; i >= 0; i--) {
+	    Object o = inputs[i];
+	    if (usePrimitive(o)) {
+		o = poll(o);
+	    }
+	    objects[i] = o;
+	}
+	return objects;
     }
 
 }
