@@ -4,4 +4,4 @@
 .settings/
 infinitest.filters
 target/
-
+*.md.html
