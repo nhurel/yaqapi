@@ -66,3 +66,8 @@ See example below to understand :
 User user = queryOn(new User());
 List<User> parents = select(user).from(user).innerJoin(user.getChildren()).where($(user.getChildren()).getAge()).isLessThan(10).build(sessionFactory.createSession()).list();
 ```
+
+#License
+YAQ API is distributed under Mozilla Public License v2.0 meaning you can use this library either in open source and proprietary project.
+
+If you improve this project by adding functionnality or fixing a bug, you must share all your improvements.
