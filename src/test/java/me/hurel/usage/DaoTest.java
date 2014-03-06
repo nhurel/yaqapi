@@ -29,10 +29,11 @@ public class DaoTest {
     public void populateDB() throws SQLException {
 	Connection connection = new Driver().connect("jdbc:h2:mem:yaqapi", null);
 	connection.createStatement().execute("DROP TABLE IF EXISTS T_USER");
-	connection.createStatement().execute("CREATE TABLE T_USER(ID BIGINT, ADRESS_ID BIGINT, FIRSTNAME VARCHAR(255), LASTNAME VARCHAR(255), AGE SMALLINT, FATHER_ID BIGINT)");
-	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(1,NULL,'grandfather','toto',25, NULL)");
-	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(2,NULL,'titi','toto',25, 1)");
-	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(3,NULL,'tata','tutu',2, 2)");
+	connection.createStatement().execute(
+		"CREATE TABLE T_USER(ID BIGINT, ADRESS_ID BIGINT, FIRSTNAME VARCHAR(255), LASTNAME VARCHAR(255), AGE SMALLINT, FATHER_ID BIGINT, MALE TINYINT(1) )");
+	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(1,NULL,'grandfather','toto',25, NULL, 1)");
+	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(2,NULL,'titi','toto',25, 1, 1)");
+	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(3,NULL,'tata','tutu',2, 2, 0)");
 	connection.close();
     }
 

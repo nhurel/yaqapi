@@ -8,6 +8,8 @@
  */
 package me.hurel.hqlbuilder.functions;
 
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
+
 public class ParameterizedFunction<T> implements Function<T> {
 
     private final String name;
@@ -17,7 +19,7 @@ public class ParameterizedFunction<T> implements Function<T> {
     public ParameterizedFunction(String name, T entity) {
 	super();
 	this.name = name;
-	this.entity = entity;
+	this.entity = HQBInvocationHandler.getCurrentInvocationHandler().poll(entity);
     }
 
     public ParameterizedFunction(FUNCTION name, T entity) {

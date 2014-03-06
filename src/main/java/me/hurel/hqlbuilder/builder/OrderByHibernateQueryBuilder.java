@@ -9,6 +9,7 @@
 package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.OrderByClause;
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class OrderByHibernateQueryBuilder extends HibernateQueryBuilder implements OrderByClause {
     Object[] aliases;
@@ -19,7 +20,7 @@ public class OrderByHibernateQueryBuilder extends HibernateQueryBuilder implemen
 
     OrderByHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, Object... orders) {
 	super(root);
-	this.aliases = orders;
+	this.aliases = HQBInvocationHandler.getCurrentInvocationHandler().poll(orders);
 	this.separator = separator.separator;
     }
 

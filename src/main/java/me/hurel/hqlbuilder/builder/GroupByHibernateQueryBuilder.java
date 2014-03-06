@@ -12,6 +12,7 @@ import me.hurel.hqlbuilder.GroupByClause;
 import me.hurel.hqlbuilder.OrderByClause;
 import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.functions.Function;
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class GroupByHibernateQueryBuilder extends HibernateQueryBuilder implements GroupByClause {
 
@@ -19,7 +20,7 @@ public class GroupByHibernateQueryBuilder extends HibernateQueryBuilder implemen
 
     GroupByHibernateQueryBuilder(HibernateQueryBuilder root, Object... properties) {
 	super(root);
-	this.properties = properties;
+	this.properties = HQBInvocationHandler.getCurrentInvocationHandler().poll(properties);
     }
 
     /*

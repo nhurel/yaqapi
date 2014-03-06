@@ -40,6 +40,8 @@ public class User {
 
     private User father;
 
+    private boolean male;
+
     public User() {
 	super();
     }
@@ -109,6 +111,14 @@ public class User {
 
     public void setId(Long id) {
 	this.id = id;
+    }
+
+    public boolean isMale() {
+	return male;
+    }
+
+    public void setMale(boolean male) {
+	this.male = male;
     }
 
 }

@@ -8,6 +8,8 @@
  */
 package me.hurel.hqlbuilder.functions;
 
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
+
 public class IntFunction implements Function<Integer> {
 
     private final String name;
@@ -20,7 +22,7 @@ public class IntFunction implements Function<Integer> {
 
     public IntFunction(String name, Object entity) {
 	this.name = name;
-	this.entity = entity;
+	this.entity = HQBInvocationHandler.getCurrentInvocationHandler().poll(entity);
     }
 
     public String getName() {

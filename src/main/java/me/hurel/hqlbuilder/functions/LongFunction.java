@@ -8,6 +8,7 @@
  */
 package me.hurel.hqlbuilder.functions;
 
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class LongFunction implements Function<Long> {
     private final String name;
@@ -15,19 +16,19 @@ public class LongFunction implements Function<Long> {
     private final Object entity;
 
     public LongFunction(FUNCTION name, Object entity) {
-        this(name.getFunction(), entity);
+	this(name.getFunction(), entity);
     }
 
     public LongFunction(String name, Object entity) {
-        this.name = name;
-        this.entity = entity;
+	this.name = name;
+	this.entity = HQBInvocationHandler.getCurrentInvocationHandler().poll(entity);
     }
 
     public String getName() {
-        return name;
+	return name;
     }
 
     public Object getEntity() {
-        return entity;
+	return entity;
     }
 }

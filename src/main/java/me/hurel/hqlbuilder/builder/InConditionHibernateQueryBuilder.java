@@ -8,13 +8,15 @@
  */
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
+
 public class InConditionHibernateQueryBuilder<T> extends ConditionHibernateQueryBuilder<T> {
 
-    final T[] values;
+    final Object[] values;
 
     InConditionHibernateQueryBuilder(HibernateQueryBuilder root, OPERATOR operator, T... values) {
 	super(root, operator, null);
-	this.values = values;
+	this.values = HQBInvocationHandler.getCurrentInvocationHandler().poll(values);
     }
 
     @Override

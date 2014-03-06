@@ -11,6 +11,7 @@ package me.hurel.hqlbuilder.builder;
 import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
 import me.hurel.hqlbuilder.builder.AbstractFromQueryBuilder.JOIN;
+import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implements SelectClause {
 
@@ -19,13 +20,13 @@ public class SelectHibernateQueryBuilder extends HibernateQueryBuilder implement
     boolean distinct = false;
 
     SelectHibernateQueryBuilder(Object... selects) {
-	this.aliases = selects;
+	this.aliases = HQBInvocationHandler.getCurrentInvocationHandler().poll(selects);
 	chain(this);
     }
 
     SelectHibernateQueryBuilder(HibernateQueryBuilder root, Object... selects) {
 	super(root);
-	this.aliases = selects;
+	this.aliases = HQBInvocationHandler.getCurrentInvocationHandler().poll(selects);
     }
 
     public FromClause from(Object entity) {

@@ -39,6 +39,8 @@ public class Car {
 
     private Boolean hybrid;
 
+    private User owner;
+
     public Car() {
 	super();
     }
@@ -103,6 +105,14 @@ public class Car {
 
     public void setHybrid(Boolean hybrid) {
 	this.hybrid = hybrid;
+    }
+
+    public User getOwner() {
+	return owner;
+    }
+
+    public void setOwner(User owner) {
+	this.owner = owner;
     }
 
 }

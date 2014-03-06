@@ -239,7 +239,6 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	} else if (boolean.class.equals(randomizeType) || Boolean.class.equals(randomizeType)) {
 	    primitiveAliasedObject = new Object();
 	    lastBoolean = !lastBoolean;
-	    // TODO LOG WARN ABOUT BOOLEAN SUPPORT
 	    return lastBoolean;
 	} else if (Byte.class.equals(randomizeType) || byte.class.equals(randomizeType)) {
 	    return ++lastByte;
