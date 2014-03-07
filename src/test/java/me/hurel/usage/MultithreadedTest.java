@@ -13,6 +13,7 @@ import static org.fest.assertions.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +45,27 @@ public class MultithreadedTest {
 	assertConcurrent("Test with 30 threads", runnables, 5);
     }
 
+    @Test
+    public void test_with_10_other_threads() throws InterruptedException {
+	List<Runnable> runnables = new ArrayList<Runnable>();
+	for (int i = 0; i < 10; i++) {
+	    runnables.add(otherTest());
+	}
+	assertConcurrent("Test with 10 other threads", runnables, 5);
+    }
+
+    @Test
+    public void test_with_10_threads_and_10_other_threads() throws InterruptedException {
+	List<Runnable> runnables = new ArrayList<Runnable>();
+	for (int i = 0; i < 10; i++) {
+	    runnables.add(newTest());
+	}
+	for (int i = 0; i < 10; i++) {
+	    runnables.add(otherTest());
+	}
+	assertConcurrent("Test with 20 threads", runnables, 5);
+    }
+
     public Runnable newTest() {
 	return new Runnable() {
 	    public void run() {
@@ -57,6 +79,19 @@ public class MultithreadedTest {
 			.isEqualTo(
 				"SELECT user FROM User user INNER JOIN FETCH user.children children WHERE EXISTS ( SELECT distinct(user2.id) FROM User user2 WHERE EXISTS ( SELECT distinct(user3.id) FROM User user3 WHERE user3.age <= ?1 AND user3.father.id = user2.id ) AND user2.father.id = user.id ) ");
 		assertThat(query.getParameters()).containsExactly(2);
+	    }
+	};
+    }
+
+    public Runnable otherTest() {
+	return new Runnable() {
+	    public void run() {
+		User user = queryOn(new User());
+		Date d = new Date();
+		Condition<?> query = select(user).from(user).innerJoin(user.getCar()).where(user.getCar().getReleaseDate()).isLessEqualThan(d)
+			.andGroup(user.getCar().getSellDate()).isNull().or(user.getCar().getSellDate()).isLessEqualThan(d).closeGroup();
+		assertThat(query.getQueryString()).isEqualTo(
+			"SELECT user FROM User user INNER JOIN user.car car WHERE car.releaseDate <= ?1 AND ( car.sellDate IS NULL OR car.sellDate <= ?2 ) ");
 	    }
 	};
     }
