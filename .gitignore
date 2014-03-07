@@ -5,3 +5,5 @@
 infinitest.filters
 target/
 *.md.html
+.idea/
+*.iml
