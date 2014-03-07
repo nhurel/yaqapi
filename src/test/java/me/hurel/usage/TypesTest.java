@@ -2,7 +2,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
@@ -10,7 +10,12 @@ package me.hurel.usage;
 
 import static me.hurel.hqlbuilder.builder.Yaqapi.*;
 import static org.fest.assertions.Assertions.*;
+
+import java.util.Date;
+
 import me.hurel.entity.Car;
+import me.hurel.entity.TypeEntity;
+import me.hurel.entity.User;
 import me.hurel.hqlbuilder.Condition;
 import me.hurel.hqlbuilder.OrderByClause;
 import me.hurel.hqlbuilder.QueryBuilder;
@@ -35,23 +40,23 @@ public class TypesTest {
 
     @Test
     public void select_map() {
-	Car car = queryOn(new Car());
-	String queryString = select(car.getSomeMap()).from(car).getQueryString();
-	assertThat(queryString).isEqualTo("SELECT car.someMap FROM Car car ");
+	TypeEntity te = queryOn(new TypeEntity());
+	String queryString = select(te.getSomeMap()).from(te).getQueryString();
+	assertThat(queryString).isEqualTo("SELECT typeEntity.someMap FROM TypeEntity typeEntity ");
     }
 
     @Test
     public void select_list() {
-	Car car = queryOn(new Car());
-	String queryString = select(car.getSomeList()).from(car).getQueryString();
-	assertThat(queryString).isEqualTo("SELECT car.someList FROM Car car ");
+	TypeEntity typeEntity = queryOn(new TypeEntity());
+	String queryString = select(typeEntity.getSomeList()).from(typeEntity).getQueryString();
+	assertThat(queryString).isEqualTo("SELECT typeEntity.someList FROM TypeEntity typeEntity ");
     }
 
     @Test
     public void select_list_where_list() {
-	Car car = queryOn(new Car());
-	String queryString = select(car.getSomeList()).from(car).where($(car.getSomeList())).isEqualTo("Ford").getQueryString();
-	assertThat(queryString).isEqualTo("SELECT car.someList FROM Car car WHERE car.someList = ?1 ");
+	TypeEntity typeEntity = queryOn(new TypeEntity());
+	String queryString = select(typeEntity.getSomeList()).from(typeEntity).where($(typeEntity.getSomeList())).isEqualTo("Ford").getQueryString();
+	assertThat(queryString).isEqualTo("SELECT typeEntity.someList FROM TypeEntity typeEntity WHERE typeEntity.someList = ?1 ");
     }
 
     @Test
@@ -100,6 +105,24 @@ public class TypesTest {
 	Car car = queryOn(new Car());
 	QueryBuilder query = select(distinct(car.isHybrid())).from(car);
 	assertThat(query.getQueryString()).isEqualTo("SELECT distinct(car.hybrid) FROM Car car ");
+    }
+
+    @Test
+    public void select_date_from_date() {
+	Car car = queryOn(new Car());
+	Date d = new Date();
+	Condition<?> query = select(car).from(car).where(car.getReleaseDate()).isLessThan(d).andGroup(car.getSellDate()).isNull().or(car.getSellDate()).isLessThan(d).closeGroup();
+	assertThat(query.getQueryString()).isEqualTo("SELECT car FROM Car car WHERE car.releaseDate < ?1 AND ( car.sellDate IS NULL OR car.sellDate < ?2 ) ");
+    }
+
+    @Test
+    public void select_from_join_entity() {
+	User user = queryOn(new User());
+	Date d = new Date();
+	Condition<?> query = select(user).from(user).innerJoin(user.getCar()).where(user.getCar().getReleaseDate()).isLessEqualThan(d).andGroup(user.getCar().getSellDate())
+		.isNull().or(user.getCar().getSellDate()).isLessEqualThan(d).closeGroup();
+	assertThat(query.getQueryString()).isEqualTo(
+		"SELECT user FROM User user INNER JOIN user.car car WHERE car.releaseDate <= ?1 AND ( car.sellDate IS NULL OR car.sellDate <= ?2 ) ");
     }
 
 }

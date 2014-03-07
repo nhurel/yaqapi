@@ -2,7 +2,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
@@ -116,6 +116,9 @@ public class HQBInvocationHandler implements MethodInterceptor {
 		Class<?> returnType = method.getReturnType();
 		if (returnValue == null || returnType.isPrimitive() || (!Enhancer.isEnhanced(returnValue.getClass()))) {
 		    returnValue = getReturnValue(returnType, method, fieldName);
+		    if (usePrimitive(returnValue)) {
+			primitiveAliasedObject = new Object();
+		    }
 		    setProxiedField(obj, returnValue, fieldName);
 		    if (primitiveAliasedObject != null) {
 			parentsEntities.put(primitiveAliasedObject, obj);
@@ -185,7 +188,9 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	Object returnValue;
 	try {
 	    returnValue = returnType.newInstance();
-	    returnValue = buildProxy(returnValue, returnType, this);
+	    if (!usePrimitive(returnValue)) {
+		returnValue = buildProxy(returnValue, returnType, this);
+	    }
 	} catch (Exception e) {
 	    returnValue = null;
 	    Constructor<?> constructor = findBestConstructor(returnType.getConstructors());
@@ -237,7 +242,6 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	if (String.class.equals(randomizeType)) {
 	    return UUID.randomUUID().toString();
 	} else if (boolean.class.equals(randomizeType) || Boolean.class.equals(randomizeType)) {
-	    primitiveAliasedObject = new Object();
 	    lastBoolean = !lastBoolean;
 	    return lastBoolean;
 	} else if (Byte.class.equals(randomizeType) || byte.class.equals(randomizeType)) {

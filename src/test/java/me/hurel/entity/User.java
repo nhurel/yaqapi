@@ -2,7 +2,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
@@ -41,6 +41,8 @@ public class User {
     private User father;
 
     private boolean male;
+
+    private Car car;
 
     public User() {
 	super();
@@ -121,4 +123,13 @@ public class User {
 	this.male = male;
     }
 
+    @ManyToOne
+    @JoinColumn(name = "CAR_ID")
+    public Car getCar() {
+	return car;
+    }
+
+    public void setCar(Car car) {
+	this.car = car;
+    }
 }

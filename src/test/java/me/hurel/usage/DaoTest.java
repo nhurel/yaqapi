@@ -2,7 +2,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
@@ -29,11 +29,14 @@ public class DaoTest {
     public void populateDB() throws SQLException {
 	Connection connection = new Driver().connect("jdbc:h2:mem:yaqapi", null);
 	connection.createStatement().execute("DROP TABLE IF EXISTS T_USER");
+	connection.createStatement().execute("DROP TABLE IF EXISTS T_CAR");
 	connection.createStatement().execute(
-		"CREATE TABLE T_USER(ID BIGINT, ADRESS_ID BIGINT, FIRSTNAME VARCHAR(255), LASTNAME VARCHAR(255), AGE SMALLINT, FATHER_ID BIGINT, MALE TINYINT(1) )");
-	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(1,NULL,'grandfather','toto',25, NULL, 1)");
-	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(2,NULL,'titi','toto',25, 1, 1)");
-	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(3,NULL,'tata','tutu',2, 2, 0)");
+		"CREATE TABLE T_CAR(ID BIGINT, RELEASE_DATE DATE, SELL_DATE DATE, MODEL VARCHAR(255), PRICE NUMBER(10,2), USER_ID BIGINT, HYBRID TINYINT(1) )");
+	connection.createStatement().execute(
+		"CREATE TABLE T_USER(ID BIGINT, ADRESS_ID BIGINT, FIRSTNAME VARCHAR(255), LASTNAME VARCHAR(255), AGE SMALLINT, FATHER_ID BIGINT, CAR_ID BIGINT, MALE TINYINT(1) )");
+	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(1,NULL,'grandfather','toto',25, NULL, NULL, 1)");
+	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(2,NULL,'titi','toto',25, 1, NULL, 1)");
+	connection.createStatement().executeUpdate("INSERT INTO T_USER VALUES(3,NULL,'tata','tutu',2, 2, NULL, 0)");
 	connection.close();
     }
 

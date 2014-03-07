@@ -2,7 +2,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.util.Date;
 
 import net.sf.cglib.core.ReflectUtils;
 import net.sf.cglib.proxy.Enhancer;
@@ -30,7 +31,7 @@ public class ProxyUtil {
     }
 
     public static boolean usePrimitive(Object o) {
-	return boolean.class.equals(o.getClass()) || o instanceof Boolean;
+	return boolean.class.equals(o.getClass()) || o instanceof Boolean || o instanceof Date;
     }
 
     public static String toAlias(Class<?> entity) {

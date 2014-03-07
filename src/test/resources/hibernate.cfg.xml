@@ -27,6 +27,7 @@
 		<mapping package="me.hurel.entity"/>
 		<mapping class="me.hurel.entity.User"/>
 		<mapping class="me.hurel.entity.Adress"/>
+		<mapping class="me.hurel.entity.Car"/>
 		<mapping class="me.hurel.entity.City"/>
 		<mapping class="me.hurel.entity.Country"/>
 
