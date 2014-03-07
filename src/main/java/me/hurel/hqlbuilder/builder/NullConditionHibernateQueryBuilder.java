@@ -8,7 +8,6 @@
  */
 package me.hurel.hqlbuilder.builder;
 
-
 public class NullConditionHibernateQueryBuilder<T> extends ConditionHibernateQueryBuilder<T> {
 
     public NullConditionHibernateQueryBuilder(WhereHibernateQueryBuilder<T> where) {

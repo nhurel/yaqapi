@@ -25,27 +25,27 @@ public class Country {
     private String name;
 
     public Country() {
-        super();
+	super();
     }
 
     @Column(name = "NAME")
     public String getName() {
-        return name;
+	return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+	this.name = name;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID", nullable = false)
     public Long getId() {
-        return id;
+	return id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+	this.id = id;
     }
 
 }

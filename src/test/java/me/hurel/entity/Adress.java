@@ -30,45 +30,45 @@ public class Adress {
     private City city;
 
     public Adress() {
-        super();
+	super();
     }
 
     @Column(name = "STREET")
     public String getStreet() {
-        return street;
+	return street;
     }
 
     public void setStreet(String street) {
-        this.street = street;
+	this.street = street;
     }
 
     @Column(name = "NUMBER")
     public String getNumber() {
-        return number;
+	return number;
     }
 
     public void setNumber(String number) {
-        this.number = number;
+	this.number = number;
     }
 
     @ManyToOne
     public City getCity() {
-        return city;
+	return city;
     }
 
     public void setCity(City city) {
-        this.city = city;
+	this.city = city;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID", nullable = false)
     public Long getId() {
-        return id;
+	return id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+	this.id = id;
     }
 
 }

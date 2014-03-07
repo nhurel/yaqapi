@@ -28,36 +28,36 @@ public class City {
     private Country country;
 
     public City() {
-        super();
+	super();
     }
 
     @Column(name = "NAME")
     public String getName() {
-        return name;
+	return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+	this.name = name;
     }
 
     @ManyToOne
     public Country getCountry() {
-        return country;
+	return country;
     }
 
     public void setCountry(Country country) {
-        this.country = country;
+	this.country = country;
     }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID", nullable = false)
     public Long getId() {
-        return id;
+	return id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+	this.id = id;
     }
 
 }
