@@ -1,5 +1,5 @@
 # Presentation
-YAQ API is Yet Another Query API. It takes the typesafety from torpedo project and the 
+YAQ API is Yet Another Query API. It takes the typesafety from torpedo query project and the 
 fluent syntax from jooq to provide the best Hibernate Query DSL. YAQ API main advantages are :
 * Easy to use API through its DSL
 * No class generation needed, no specific annotation nor any other tricky stuff
@@ -10,15 +10,15 @@ fluent syntax from jooq to provide the best Hibernate Query DSL. YAQ API main ad
 YAQ API is as easy to install as just including a jar in your classpath. 
 
 ## Maven support
-Even if YAP API is not yet available on a maven central repository, you can easily reference it in 
+Even if YAQ API is not yet available on a maven central repository, you can easily reference it in 
 your pom.xml with the system scope :
 ```xml
 <dependency>
-	<groupId>me.hurel</groupId>
-	<artifactId>hql-builder</artifactId>
+	<groupId>me.hurel.hqlbuilder</groupId>
+	<artifactId>yaqapi</artifactId>
 	<version>1.0.0</version>
 	<scope>system</scope>
-	<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/hql-builder.jar</systemPath>
+	<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/yaqapi-1.0.0.jar</systemPath>
 </dependency>
 ```
 

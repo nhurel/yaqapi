@@ -9,10 +9,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>me.hurel</groupId>
-	<artifactId>hql-builder</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>HQLBuilder</name>
+	<groupId>me.hurel.hqlbuilder</groupId>
+	<artifactId>yaqapi</artifactId>
+	<version>1.0.0</version>
+	<name>Yaqapi</name>
 	<description>HQLBuilder is a fluent DSL API to construct hibernate query</description>
 	<developers>
 		<developer>
