@@ -1,4 +1,4 @@
-# Presentation
+# Introduction
 YAQ API is Yet Another Query API. It takes the typesafety from torpedo query project and the 
 fluent syntax from jooq to provide the best Hibernate Query DSL. YAQ API main advantages are :
 * Easy to use API through its DSL
@@ -6,7 +6,7 @@ fluent syntax from jooq to provide the best Hibernate Query DSL. YAQ API main ad
 * Fluent query writing
 * **No more StringBuilders** :stuck_out_tongue:
 
-# Installation
+# Setup
 YAQ API is as easy to install as just including a jar in your classpath. 
 
 ## Maven support
