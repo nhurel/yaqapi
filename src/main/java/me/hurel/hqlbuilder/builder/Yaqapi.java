@@ -10,6 +10,7 @@ package me.hurel.hqlbuilder.builder;
 
 import java.util.Collection;
 
+import me.hurel.hqlbuilder.AliasableSelectClause;
 import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
 import me.hurel.hqlbuilder.functions.Function;
@@ -30,7 +31,7 @@ public class Yaqapi {
      * accessed through the getters. If another proxy is needed to write the
      * query (meaning, you want to make a full cartesian join on another
      * object), you have to use the
-     * {@link HibernateQueryBuilder#andQueryOn(Object) andQueryOn} method
+     * {@link me.hurel.hqlbuilder.builder.Yaqapi#andQueryOn(Object) andQueryOn} method
      * 
      * @param entity
      * @return
@@ -98,7 +99,7 @@ public class Yaqapi {
      *            the property to get from the entity oe the entity
      * @return
      */
-    public static SelectClause select(Object methodCall) {
+    public static AliasableSelectClause select(Object methodCall) {
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
     }
 
@@ -110,7 +111,7 @@ public class Yaqapi {
      *            the property to get from the entity or the entity
      * @return
      */
-    public static SelectClause selectDistinct(Object methodCall) {
+    public static AliasableSelectClause selectDistinct(Object methodCall) {
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
     }
 

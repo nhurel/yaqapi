@@ -48,9 +48,12 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	if (select.distinct) {
 	    query.append("DISTINCT ");
 	}
-	int i = select.aliases.length;
-	for (Object alias : select.aliases) {
-	    appendAliasOrPath(alias);
+	int i = select.map.size();
+	for (Map.Entry<Object,String> object: select.map.entrySet()) {
+	    appendAliasOrPath(object.getKey());
+	    if(object.getValue()!=null && object.getValue().trim().length()>0){
+		query.append(" AS ").append(object.getValue());
+	    }
 	    if (--i > 0) {
 		query.append(',');
 	    }
