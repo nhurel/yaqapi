@@ -90,7 +90,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(JoinQueryBuilder join) {
-	query.append(join.join).append(join.fetch ? " FETCH " : ' ').append(getReducedPath(join.object)).append(' ').append(aliases.get(join.object)).append(' ');
+	query.append(join.join).append(join.fetch ? " FETCH " : ' ').append(getReducedPath(join.object, false)).append(' ').append(aliases.get(join.object)).append(' ');
     }
 
     public void visit(WhereHibernateQueryBuilder<?> builder) {
@@ -222,26 +222,29 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 		if (function.getName().equals(FUNCTION.COUNT.getFunction()) && function.getEntity().equals("*")) {
 		    query.append(function.getEntity());
 		} else {
-		    query.append(getReducedPath(function.getEntity()));
+		    query.append(getReducedPath(function.getEntity(), true));
 		}
 	    }
 	    query.append(')');
 	} else {
-	    query.append(getReducedPath(entity));
+	    query.append(getReducedPath(entity, true));
 	}
     }
 
-    private String getReducedPath(Object entity) {
+    private String getReducedPath(Object entity, boolean shortest) {
 	String result = null;
+	if(shortest && joinedEntities.contains(entity)){
+	    return aliases.get(entity);
+	}
 	result = paths.get(entity);
 	Object knownJoinParent = parentEntities.get(entity);
 	Object previousKnownParent = null;
-	while (knownJoinParent != null && previousKnownParent == null) {
-	    if (joinedEntities.contains(knownJoinParent)) {
-		previousKnownParent = knownJoinParent;
-	    }
-	    knownJoinParent = parentEntities.get(knownJoinParent);
-	}
+    while (knownJoinParent != null && previousKnownParent == null) {
+        if (joinedEntities.contains(knownJoinParent)) {
+            previousKnownParent = knownJoinParent;
+        }
+        knownJoinParent = parentEntities.get(knownJoinParent);
+    }
 	if (previousKnownParent != null) {
 	    String parentPath = paths.get(previousKnownParent);
 	    String end = StringUtils.difference(parentPath, result);

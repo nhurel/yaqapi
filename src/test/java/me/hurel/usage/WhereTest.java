@@ -88,6 +88,13 @@ public class WhereTest {
     }
 
     @Test
+    public void select_where_joined_list_null() {
+        User user = queryOn(new User());
+        String queryString = selectFrom(user).leftJoin(user.getChildren()).where(user.getChildren()).isNull().getQueryString();
+        assertThat(queryString).isEqualTo("SELECT user FROM User user LEFT JOIN user.children children WHERE children IS NULL ");
+    }
+
+    @Test
     public void where_and_where_clause() {
 	User user = queryOn(new User());
 	User user2 = andQueryOn(new User());
@@ -118,6 +125,15 @@ public class WhereTest {
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.firstName, user2.firstName FROM User user , User user2 WHERE user.lastName = user2.lastName OR user.firstName IS NULL ");
 	assertThat(query.getParameters()).isNullOrEmpty();
+    }
+
+    @Test
+    public void select_where_joined_entity_property_is_null() {
+        User user = queryOn(new User());
+        QueryBuilder query = select(user).from(user).rightJoin(user.getAdress()).where(user.getAdress()).isNull();
+        String queryString = query.getQueryString();
+        assertThat(queryString).isEqualTo("SELECT user FROM User user RIGHT JOIN user.adress adress WHERE adress IS NULL ");
+        assertThat(query.getParameters()).isNullOrEmpty();
     }
 
 }
