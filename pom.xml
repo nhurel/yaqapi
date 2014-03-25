@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.hurel.hqlbuilder</groupId>
 	<artifactId>yaqapi</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<name>Yaqapi</name>
 	<description>HQLBuilder is a fluent DSL API to construct hibernate query</description>
 	<developers>
