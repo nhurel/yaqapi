@@ -29,4 +29,8 @@ public interface HQBVisitor {
     public void visit(ExistsHibernateQueryBuilder builder);
 
     public void visit(OrderByHibernateQueryBuilder builder);
+
+    public void visit(UnfinishedCaseWhenQueryBuilder builder);
+
+    public void visit(CaseWhenHibernateQueryBuilder builder);
 }

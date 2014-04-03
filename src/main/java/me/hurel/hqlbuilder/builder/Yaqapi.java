@@ -2,17 +2,17 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
 package me.hurel.hqlbuilder.builder;
 
-import java.util.Collection;
-
 import me.hurel.hqlbuilder.AliasableSelectClause;
 import me.hurel.hqlbuilder.FromClause;
 import me.hurel.hqlbuilder.SelectClause;
+import me.hurel.hqlbuilder.WhenClause;
+import me.hurel.hqlbuilder.builder.HibernateQueryBuilder.SEPARATOR;
 import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.functions.Function.FUNCTION;
 import me.hurel.hqlbuilder.functions.IntFunction;
@@ -21,6 +21,8 @@ import me.hurel.hqlbuilder.functions.ParameterizedFunction;
 import me.hurel.hqlbuilder.helpers.CollectionHelper;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 import me.hurel.hqlbuilder.internal.ProxyUtil;
+
+import java.util.Collection;
 
 public class Yaqapi {
 
@@ -32,7 +34,7 @@ public class Yaqapi {
      * query (meaning, you want to make a full cartesian join on another
      * object), you have to use the
      * {@link me.hurel.hqlbuilder.builder.Yaqapi#andQueryOn(Object) andQueryOn} method
-     * 
+     *
      * @param entity
      * @return
      */
@@ -48,7 +50,7 @@ public class Yaqapi {
     /**
      * This method returns a proxy on the given entity. It can be usefull if you
      * need two proxies on two distinct entities when writing a query
-     * 
+     *
      * @param entity
      * @return
      */
@@ -58,7 +60,7 @@ public class Yaqapi {
 
     /**
      * This method is a helper to query on a collection property of the entity.
-     * 
+     *
      * @param methodCall
      * @return
      */
@@ -72,9 +74,8 @@ public class Yaqapi {
 
     /**
      * Start a new query to get only ones entity
-     * 
-     * @param entity
-     *            The entity to query on
+     *
+     * @param entity The entity to query on
      * @return
      */
     public static FromClause selectFrom(Object entity) {
@@ -83,9 +84,8 @@ public class Yaqapi {
 
     /**
      * Start a new query to get only distinct ones entity
-     * 
-     * @param entity
-     *            The entity to query on
+     *
+     * @param entity The entity to query on
      * @return
      */
     public static FromClause selectDistinctFrom(Object entity) {
@@ -94,9 +94,8 @@ public class Yaqapi {
 
     /**
      * Start a query to get a property on an entity or an entity itself
-     * 
-     * @param methodCall
-     *            the property to get from the entity oe the entity
+     *
+     * @param methodCall the property to get from the entity oe the entity
      * @return
      */
     public static AliasableSelectClause select(Object methodCall) {
@@ -106,9 +105,8 @@ public class Yaqapi {
     /**
      * Start a query to get distinct value of the property of on an entity or of
      * the entities
-     * 
-     * @param methodCall
-     *            the property to get from the entity or the entity
+     *
+     * @param methodCall the property to get from the entity or the entity
      * @return
      */
     public static AliasableSelectClause selectDistinct(Object methodCall) {
@@ -117,26 +115,35 @@ public class Yaqapi {
 
     /**
      * Start a query to get multiple properties and/or entities
-     * 
-     * @param methodCall
-     *            the properties and entities to get
+     *
+     * @param methodCall the properties and entities to get
      * @return
      */
     public static SelectClause select(Object... methodCall) {
-	assert methodCall != null;
+	if (methodCall == null) {
+	    throw new NullPointerException();
+	}
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall);
     }
 
     /**
      * Start a query to get distinct properties and/or entities
-     * 
-     * @param methodCall
-     *            the properties and entities to get
+     *
+     * @param methodCall the properties and entities to get
      * @return
      */
     public static SelectClause selectDistinct(Object... methodCall) {
-	assert methodCall != null;
+	if (methodCall == null) {
+	    throw new NullPointerException();
+	}
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
+    }
+
+    public static <T> WhenClause<T> caseWhen(T methodCall) {
+	if (methodCall == null) {
+	    throw new NullPointerException();
+	}
+	return new WhereHibernateQueryBuilder(SEPARATOR.WHEN, methodCall);
     }
 
     public static <T> Function<T> max(T methodCall) {

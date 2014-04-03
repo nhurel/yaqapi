@@ -2,39 +2,31 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.functions.Function;
+import me.hurel.hqlbuilder.functions.Function.FUNCTION;
+import me.hurel.hqlbuilder.internal.ProxyUtil;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import me.hurel.hqlbuilder.functions.Function;
-import me.hurel.hqlbuilder.functions.Function.FUNCTION;
-import me.hurel.hqlbuilder.internal.ProxyUtil;
-
-import org.apache.commons.lang3.StringUtils;
-
 public class HQBQueryStringVisitor implements HQBVisitor {
 
     private final StringBuilder query = new StringBuilder();
-
-    private boolean from = false;
-
     private final Map<Object, String> aliases;
-
     private final Map<Object, String> paths;
-
     private final Map<Object, Object> parentEntities;
-
     private final List<Object> joinedEntities;
-
-    private int params = 1;
-
     List<Object> parameters;
+    private boolean from = false;
+    private int params = 1;
 
     public HQBQueryStringVisitor(Map<Object, String> aliases, Map<Object, String> paths, Map<Object, Object> parentEntities, List<Object> joinedEntities) {
 	this.aliases = aliases;
@@ -49,9 +41,13 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	    query.append("DISTINCT ");
 	}
 	int i = select.map.size();
-	for (Map.Entry<Object,String> object: select.map.entrySet()) {
-	    appendAliasOrPath(object.getKey());
-	    if(object.getValue()!=null && object.getValue().trim().length()>0){
+	for (Map.Entry<Object, String> object : select.map.entrySet()) {
+	    if (object.getKey() instanceof CaseWhenHibernateQueryBuilder) {
+		appendCaseWhenClause((CaseWhenHibernateQueryBuilder) object.getKey());
+	    } else {
+		appendAliasOrPath(object.getKey());
+	    }
+	    if (object.getValue() != null && object.getValue().trim().length() > 0) {
 		query.append(" AS ").append(object.getValue());
 	    }
 	    if (--i > 0) {
@@ -88,7 +84,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
     public void visit(FromHibernateQueryBuilder fromClause) {
 	query.append(from ? ',' : fromClause.join).append(' ').append(ProxyUtil.getActualClass(fromClause.object.getClass()).getSimpleName()).append(' ')
-		.append(aliases.get(fromClause.object)).append(' ');
+			.append(aliases.get(fromClause.object)).append(' ');
 	from = true;
     }
 
@@ -167,6 +163,23 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	}
     }
 
+
+    public void visit(UnfinishedCaseWhenQueryBuilder builder) {
+	query.append("THEN ").append(builder.value).append(' ');
+    }
+
+    public void visit(CaseWhenHibernateQueryBuilder builder) {
+	query.append("ELSE ").append(builder.value).append(" END");
+    }
+
+    public void appendCaseWhenClause(CaseWhenHibernateQueryBuilder builder) {
+	query.append('(');
+	for (HibernateQueryBuilder caseWhenBuilder : builder.chain) {
+	    caseWhenBuilder.accept(this);
+	}
+	query.append(')');
+    }
+
     private void appendAliasOrPath(Object entity) {
 	if (entity instanceof Function<?>) {
 	    Function<?> function = (Function<?>) entity;
@@ -199,7 +212,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	    }
 	    if (!joinedEntities.contains(knownJoinParent)) {
 		throw new RuntimeException("Failed to continue query after [" + query.toString()
-			+ "] because an entity was used in clause but neither it nor its parent appears explicitely in the from clause");
+				+ "] because an entity was used in clause but neither it nor its parent appears explicitely in the from clause");
 	    }
 	    if (!aliases.containsKey(knownJoinParent)) {
 		throw new RuntimeException("Failed to continue query after [" + query.toString() + "] because alias of the parent joined entity is unknown");
@@ -235,19 +248,19 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     private String getReducedPath(Object entity, boolean shortest) {
-	String result = null;
-	if(shortest && joinedEntities.contains(entity)){
+	String result;
+	if (shortest && joinedEntities.contains(entity)) {
 	    return aliases.get(entity);
 	}
 	result = paths.get(entity);
 	Object knownJoinParent = parentEntities.get(entity);
 	Object previousKnownParent = null;
-    while (knownJoinParent != null && previousKnownParent == null) {
-        if (joinedEntities.contains(knownJoinParent)) {
-            previousKnownParent = knownJoinParent;
-        }
-        knownJoinParent = parentEntities.get(knownJoinParent);
-    }
+	while (knownJoinParent != null && previousKnownParent == null) {
+	    if (joinedEntities.contains(knownJoinParent)) {
+		previousKnownParent = knownJoinParent;
+	    }
+	    knownJoinParent = parentEntities.get(knownJoinParent);
+	}
 	if (previousKnownParent != null) {
 	    String parentPath = paths.get(previousKnownParent);
 	    String end = StringUtils.difference(parentPath, result);
