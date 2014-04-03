@@ -16,7 +16,7 @@ public interface Function<T> {
 
     public enum FUNCTION {
 	AVERAGE("avg"), COUNT("count"), DISTINCT("distinct"), MAX("max"), MIN("min"), SUM("sum"), SIZE("size");
-	String function;
+	final String function;
 
 	FUNCTION(String function) {
 	    this.function = function;

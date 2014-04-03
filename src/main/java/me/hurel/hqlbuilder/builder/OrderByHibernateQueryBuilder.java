@@ -12,11 +12,11 @@ import me.hurel.hqlbuilder.OrderByClause;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class OrderByHibernateQueryBuilder extends HibernateQueryBuilder implements OrderByClause {
-    Object[] aliases;
+    final Object[] aliases;
 
     PRIORITY priority = null;
 
-    String separator;
+    final String separator;
 
     OrderByHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, Object... orders) {
 	super(root);
@@ -45,7 +45,7 @@ public class OrderByHibernateQueryBuilder extends HibernateQueryBuilder implemen
 
     public static enum PRIORITY {
 	ASC("ASC"), DESC("DESC");
-	String priority;
+	final String priority;
 
 	PRIORITY(String priority) {
 	    this.priority = priority;

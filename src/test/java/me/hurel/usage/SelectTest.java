@@ -21,8 +21,6 @@ import org.junit.Test;
 
 public class SelectTest {
 
-    Session session;
-
     @Test
     public void select_on_one_entity() {
 	User user = queryOn(new User());

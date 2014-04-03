@@ -138,6 +138,7 @@ public class Yaqapi {
 	return new UnfinishedSelectHibernateQueryBuilder(methodCall).distinct();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> WhenClause<T> caseWhen(T methodCall) {
 	if (methodCall == null) {
 	    throw new NullPointerException();

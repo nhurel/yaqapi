@@ -13,7 +13,7 @@ import me.hurel.hqlbuilder.WhenClause;
 
 public class UnfinishedCaseWhenQueryBuilder extends HibernateQueryBuilder {
 
-    Object value;
+    final Object value;
 
     UnfinishedCaseWhenQueryBuilder(HibernateQueryBuilder root, Object value){
 	super(root);

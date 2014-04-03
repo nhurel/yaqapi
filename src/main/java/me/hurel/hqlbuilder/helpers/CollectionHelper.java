@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class CollectionHelper<E> implements List<E>, Set<E> {
 
-    private E object;
+    private final E object;
 
     public CollectionHelper(E object) {
 	this.object = object;

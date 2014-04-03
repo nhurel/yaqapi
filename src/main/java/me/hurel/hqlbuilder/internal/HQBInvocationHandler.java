@@ -35,7 +35,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HQBInvocationHandler.class);
 
-    private static ThreadLocal<HQBInvocationHandler> instance = new ThreadLocal<HQBInvocationHandler>();
+    private static final ThreadLocal<HQBInvocationHandler> instance = new ThreadLocal<HQBInvocationHandler>();
 
     private StringBuilder currentPath;
 
@@ -292,9 +292,6 @@ public class HQBInvocationHandler implements MethodInterceptor {
 	return currentPath.toString();
     }
 
-    public String getCurrentAlias() {
-	return currentAlias;
-    }
 
     public Object poll(Object current) {
 	if (primitiveHistory.isEmpty()) {

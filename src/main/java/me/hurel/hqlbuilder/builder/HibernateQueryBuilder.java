@@ -162,7 +162,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
 	LIKE("LIKE"), NOT_LIKE("NOT LIKE"), GREATER(">"), GREATER_EQUAL(">="), LESS("<"), //
 	LESS_EQUAL("<="), IN("IN"), NOT_IN("NOT IN");
 
-	String operator;
+	final String operator;
 
 	OPERATOR(String operator) {
 	    this.operator = operator;
@@ -172,7 +172,7 @@ public abstract class HibernateQueryBuilder extends UnfinishedHibernateQueryBuil
     enum SEPARATOR {
 	WHERE("WHERE"), WITH("WITH"), AND("AND"), OR("OR"), HAVING("HAVING"), ORDER_BY("ORDER BY"), COMMA(","), WHEN("CASE WHEN");
 
-	String separator;
+	final String separator;
 
 	SEPARATOR(String separator) {
 	    this.separator = separator;

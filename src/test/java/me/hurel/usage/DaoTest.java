@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class DaoTest {
 
-    private UserDao dao = new UserDao();
+    private final UserDao dao = new UserDao();
 
     @Before
     public void populateDB() throws SQLException {

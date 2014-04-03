@@ -132,7 +132,7 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
     enum JOIN {
 	FROM("FROM"), INNER("INNER JOIN"), LEFT("LEFT JOIN"), RIGHT("RIGHT JOIN"), CARTESIAN(",");
 
-	String junction;
+	final String junction;
 
 	JOIN(String junction) {
 	    this.junction = junction;

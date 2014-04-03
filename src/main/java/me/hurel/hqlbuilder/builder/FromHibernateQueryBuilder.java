@@ -14,7 +14,7 @@ import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
 
 public class FromHibernateQueryBuilder extends AbstractFromQueryBuilder implements FromClause {
 
-    Object object;
+    final Object object;
 
     boolean fetch = false;
 
