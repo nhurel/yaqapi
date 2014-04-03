@@ -22,8 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 public class ProxyUtil {
 
     public static Class<?> getParameter(Method method) {
-	Class<?> result = (Class<?>) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
-	return result;
+	return (Class<?>) ((ParameterizedType) method.getGenericReturnType()).getActualTypeArguments()[0];
     }
 
     public static boolean isFinal(Class<?> objectClass) {

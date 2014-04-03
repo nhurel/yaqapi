@@ -49,13 +49,11 @@ public class HQBInvocationHandler implements MethodInterceptor {
      * Map used to retrieve parent proxy of an entity. Key is the child entity
      * and value is its parent
      */
-    private Map<Object, Object> parentsEntities = new HashMap<Object, Object>();;
+    private Map<Object, Object> parentsEntities = new HashMap<Object, Object>();
 
     private Object lastEntity;
 
     private boolean started = false;
-
-    private Object primitiveAliasedObject;
 
     private Deque<Object> primitiveHistory = new ArrayDeque<Object>();
 
@@ -89,7 +87,7 @@ public class HQBInvocationHandler implements MethodInterceptor {
     }
 
     public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-	primitiveAliasedObject = null;
+	Object primitiveAliasedObject = null;
 	Object returnValue;
 	if (method.getName().equals("equals") && args.length == 1) {
 	    // Equals of the proxied entities must be safe

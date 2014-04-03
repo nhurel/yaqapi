@@ -43,8 +43,7 @@ public class Yaqapi {
     }
 
     private static <T> T queryOn(T entity, HQBInvocationHandler handler) {
-	T o = ProxyUtil.buildProxy(entity, entity.getClass(), handler);
-	return o;
+	return ProxyUtil.buildProxy(entity, entity.getClass(), handler);
     }
 
     /**
