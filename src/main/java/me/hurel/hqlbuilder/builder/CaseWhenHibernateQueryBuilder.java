@@ -10,11 +10,11 @@ package me.hurel.hqlbuilder.builder;
 
 import me.hurel.hqlbuilder.CaseWhenClause;
 
-public class CaseWhenHibernateQueryBuilder extends HibernateQueryBuilder implements CaseWhenClause{
+public class CaseWhenHibernateQueryBuilder<T> extends HibernateQueryBuilder implements CaseWhenClause<T>{
 
     final Object value;
 
-    CaseWhenHibernateQueryBuilder(HibernateQueryBuilder root, Object value){
+    CaseWhenHibernateQueryBuilder(HibernateQueryBuilder root, T value){
 	super(root);
 	this.value=value;
     }

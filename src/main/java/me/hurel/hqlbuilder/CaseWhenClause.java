@@ -8,5 +8,5 @@
  */
 package me.hurel.hqlbuilder;
 
-public interface CaseWhenClause {
+public interface CaseWhenClause<T> {
 }

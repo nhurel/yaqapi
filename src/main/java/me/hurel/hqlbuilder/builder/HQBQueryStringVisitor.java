@@ -97,7 +97,11 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	if (builder.group) {
 	    query.append("( ");
 	}
-	appendReducedPath(builder.value);
+	if (builder.value instanceof CaseWhenHibernateQueryBuilder) {
+	    appendCaseWhenClause((CaseWhenHibernateQueryBuilder) builder.value);
+	} else {
+	    appendReducedPath(builder.value);
+	}
 	query.append(' ');
     }
 
@@ -155,7 +159,11 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	query.append("GROUP BY ");
 	int i = builder.properties.length;
 	for (Object property : builder.properties) {
-	    query.append(getAliasOrPath(property));
+	    if (property instanceof CaseWhenHibernateQueryBuilder) {
+		appendCaseWhenClause((CaseWhenHibernateQueryBuilder) property);
+	    } else {
+		query.append(getAliasOrPath(property));
+	    }
 	    if (--i > 0) {
 		query.append(',');
 	    }
@@ -165,11 +173,23 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
 
     public void visit(UnfinishedCaseWhenQueryBuilder builder) {
-	query.append("THEN ").append(builder.value).append(' ');
+	query.append("THEN ");
+	if (builder.value instanceof String || builder.value instanceof Character) {
+	    query.append('\'').append(builder.value).append('\'');
+	} else {
+	    query.append(builder.value);
+	}
+	query.append(' ');
     }
 
     public void visit(CaseWhenHibernateQueryBuilder builder) {
-	query.append("ELSE ").append(builder.value).append(" END");
+	query.append("ELSE ");
+	if (builder.value instanceof String || builder.value instanceof Character) {
+	    query.append('\'').append(builder.value).append('\'');
+	} else {
+	    query.append(builder.value);
+	}
+	query.append(" END");
     }
 
     public void appendCaseWhenClause(CaseWhenHibernateQueryBuilder builder) {

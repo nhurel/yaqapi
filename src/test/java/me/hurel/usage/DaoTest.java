@@ -79,4 +79,13 @@ public class DaoTest {
 	assertThat(familyName).isEqualTo("toto");
     }
 
+    @Test
+    public void test_query_on_dao_case_when(){
+	boolean hasParent = dao.hasParent("grandfather");
+	assertThat(hasParent).isFalse();
+	hasParent = dao.hasParent("titi");
+	assertThat(hasParent).isTrue();
+
+    }
+
 }

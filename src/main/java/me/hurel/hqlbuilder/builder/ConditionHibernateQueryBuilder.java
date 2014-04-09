@@ -39,6 +39,10 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall));
     }
 
+    public <U> WhereHibernateQueryBuilder<U> and(CaseWhenClause<U> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall));
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -49,6 +53,10 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
     }
 
     public <U> WhereHibernateQueryBuilder<U> or(Function<U> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall));
+    }
+
+    public <U> WhereHibernateQueryBuilder<U> or(CaseWhenClause<U> methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall));
     }
 
@@ -69,11 +77,19 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall).group());
     }
 
+    public <U> WhereHibernateQueryBuilder<U> orGroup(CaseWhenClause<U> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.OR, methodCall).group());
+    }
+
     public <U> WhereHibernateQueryBuilder<U> andGroup(U methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
     }
 
     public <U> WhereHibernateQueryBuilder<U> andGroup(Function<U> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
+    }
+
+    public <U> WhereHibernateQueryBuilder<U> andGroup(CaseWhenClause<U> methodCall) {
 	return chain(new WhereHibernateQueryBuilder<U>(this, SEPARATOR.AND, methodCall).group());
     }
 

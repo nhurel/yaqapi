@@ -8,6 +8,7 @@
  */
 package me.hurel.hqlbuilder.builder;
 
+import me.hurel.hqlbuilder.CaseWhenClause;
 import me.hurel.hqlbuilder.WhenClause;
 import me.hurel.hqlbuilder.WhereClause;
 import me.hurel.hqlbuilder.WithClause;
@@ -34,6 +35,12 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
     }
 
     WhereHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, Function<T> entity) {
+	super(root);
+	this.value = entity;
+	this.operator = separator.separator;
+    }
+
+    WhereHibernateQueryBuilder(HibernateQueryBuilder root, SEPARATOR separator, CaseWhenClause<T> entity) {
 	super(root);
 	this.value = entity;
 	this.operator = separator.separator;

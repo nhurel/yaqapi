@@ -125,6 +125,8 @@ public interface AbstractFromClause extends QueryBuilder {
      */
     public <T> WhereClause<T> where(Function<T> methodCall);
 
+    public <T> WhereClause<T> where(CaseWhenClause<T> methodCall);
+
     /**
      * Adds a where clause inside a grouping parenthesis. The method
      * {@link Condition#closeGroup()} has to be called to close the parenthesis
@@ -153,6 +155,8 @@ public interface AbstractFromClause extends QueryBuilder {
      * @return
      */
     public <T> WhereClause<T> whereGroup(Function<T> methodCall);
+
+    public <T> WhereClause<T> whereGroup(CaseWhenClause<T> methodCall);
 
     /**
      * Adds a group by clause on the given properties

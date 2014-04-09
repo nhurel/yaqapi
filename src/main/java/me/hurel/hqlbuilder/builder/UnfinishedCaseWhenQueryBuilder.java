@@ -21,10 +21,10 @@ public class UnfinishedCaseWhenQueryBuilder extends HibernateQueryBuilder {
     }
     
     public <T> WhenClause<T> when(T methodCall) {
-	return new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHEN, methodCall);
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHEN, methodCall));
     }
 
-    public CaseWhenClause whenElse(Object value){
+    public <T> CaseWhenClause<T> whenElse(T value){
 	return chain(new CaseWhenHibernateQueryBuilder(this, value));
     }
 

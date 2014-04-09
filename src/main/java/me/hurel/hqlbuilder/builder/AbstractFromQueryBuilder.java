@@ -8,12 +8,7 @@
  */
 package me.hurel.hqlbuilder.builder;
 
-import me.hurel.hqlbuilder.AbstractFromClause;
-import me.hurel.hqlbuilder.FromClause;
-import me.hurel.hqlbuilder.GroupByClause;
-import me.hurel.hqlbuilder.JoinClause;
-import me.hurel.hqlbuilder.OrderByClause;
-import me.hurel.hqlbuilder.WhereClause;
+import me.hurel.hqlbuilder.*;
 import me.hurel.hqlbuilder.functions.Function;
 
 public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder implements AbstractFromClause {
@@ -108,11 +103,19 @@ public abstract class AbstractFromQueryBuilder extends HibernateQueryBuilder imp
 	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall));
     }
 
+    public <T> WhereClause<T> where(CaseWhenClause<T> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall));
+    }
+
     public <T> WhereClause<T> whereGroup(T methodCall) {
 	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall).group());
     }
 
     public <T> WhereClause<T> whereGroup(Function<T> methodCall) {
+	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall).group());
+    }
+
+    public <T> WhereClause<T> whereGroup(CaseWhenClause<T> methodCall) {
 	return chain(new WhereHibernateQueryBuilder<T>(this, SEPARATOR.WHERE, methodCall).group());
     }
 

@@ -2,21 +2,20 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
 package me.hurel.dao;
 
-import static me.hurel.hqlbuilder.builder.Yaqapi.*;
-
-import java.util.List;
-
 import me.hurel.entity.User;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+
+import java.util.List;
+
+import static me.hurel.hqlbuilder.builder.Yaqapi.*;
 
 public class UserDao {
 
@@ -25,6 +24,10 @@ public class UserDao {
     static {
 	Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
 	sessionFactory = configuration.buildSessionFactory(new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build());
+    }
+
+    public static SessionFactory getSessionfactory() {
+	return sessionFactory;
     }
 
     public User getUserByFirstName(String firstName) {
@@ -41,7 +44,7 @@ public class UserDao {
 	User user = queryOn(new User());
 	try {
 	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).where(size(user.getChildren())).isGreaterEqualThan(1)
-		    .build(getSessionfactory().openSession()).list();
+			    .build(getSessionfactory().openSession()).list();
 	} finally {
 	    getSessionfactory().getCurrentSession().close();
 	}
@@ -53,7 +56,7 @@ public class UserDao {
 	User child = andQueryOn(new User());
 	try {
 	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child).where(child.getAge())
-		    .isLessEqualThan(2).and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
+			    .isLessEqualThan(2).and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
 	} finally {
 	    getSessionfactory().getCurrentSession().close();
 	}
@@ -66,15 +69,11 @@ public class UserDao {
 	User littleChild = andQueryOn(new User());
 	try {
 	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child)
-		    .whereExists(distinct(littleChild.getId())).from(littleChild).where(littleChild.getAge()).isLessEqualThan(2).and(littleChild.getFather().getId())
-		    .isEqualTo(child.getId()).closeExists().and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
+			    .whereExists(distinct(littleChild.getId())).from(littleChild).where(littleChild.getAge()).isLessEqualThan(2).and(littleChild.getFather().getId())
+			    .isEqualTo(child.getId()).closeExists().and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
 	} finally {
 	    getSessionfactory().getCurrentSession().close();
 	}
-    }
-
-    public static SessionFactory getSessionfactory() {
-	return sessionFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -87,8 +86,18 @@ public class UserDao {
 	    getSessionfactory().getCurrentSession().close();
 	}
 
-	return (String) result.get(0)[0]; // get the first colum of the first
-					  // result
+	return (String) result.get(0)[0]; // get the first colum of the first result
+    }
+
+    public boolean hasParent(String firstName) {
+	User user = queryOn(new User());
+	Boolean result=null;
+	try {
+	    result =(Boolean) select(caseWhen(user.getFather().getId()).isNull().then(false).whenElse(true)).from(user).where(user.getFirstName()).isEqualTo(firstName).build(getSessionfactory().openSession()).uniqueResult();
+	    return result;
+	} finally {
+	    getSessionfactory().getCurrentSession().close();
+	}
     }
 
 }

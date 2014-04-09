@@ -55,6 +55,8 @@ public interface Condition<T> extends QueryBuilder {
      */
     public <U> WhereClause<U> and(Function<U> methodCall);
 
+    public <U> WhereClause<U> and(CaseWhenClause<U> methodCall);
+
     /**
      * Adds a new condition on the result of the function applied to property <br/>
      * example : select(user).from(user).where
@@ -66,6 +68,8 @@ public interface Condition<T> extends QueryBuilder {
      * @return
      */
     public <U> WhereClause<U> or(Function<U> methodCall);
+
+    public <U> WhereClause<U> or(CaseWhenClause<U> methodCall);
 
     /**
      * Adds a group by clause on the given properties
@@ -82,7 +86,11 @@ public interface Condition<T> extends QueryBuilder {
 
     public <U> WhereClause<U> orGroup(Function<U> methodCall);
 
+    public <U> WhereClause<U> orGroup(CaseWhenClause<U> methodCall);
+
     public <U> WhereClause<U> andGroup(Function<U> methodCall);
+
+    public <U> WhereClause<U> andGroup(CaseWhenClause<U> methodCall);
 
     /**
      * Closes a group of condition by adding a closing parenthesis to the query <br/>
@@ -109,7 +117,7 @@ public interface Condition<T> extends QueryBuilder {
     /**
      * Adds an order by clause on the given properties
      * 
-     * @param properties
+     * @param orders
      *            One or more properties to order by
      * @return
      */

@@ -143,7 +143,7 @@ public class Yaqapi {
 	if (methodCall == null) {
 	    throw new NullPointerException();
 	}
-	return new WhereHibernateQueryBuilder(SEPARATOR.WHEN, methodCall);
+	return new WhereHibernateQueryBuilder(SEPARATOR.CASE_WHEN, methodCall);
     }
 
     public static <T> Function<T> max(T methodCall) {
