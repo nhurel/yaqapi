@@ -19,7 +19,7 @@ public class WhereGroupConditionsTest {
 
     @Test
     public void where_with_two_groups() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).innerJoin(user.getAdress()).where(user.getAdress().getNumber()).isGreaterEqualThan("10").orGroup(user.getAdress().getNumber())
 		.isLike("20%").and(user.getAdress().getStreet()).isLike("Carnaby Street%").closeGroup();
 
@@ -31,7 +31,7 @@ public class WhereGroupConditionsTest {
 
     @Test
     public void where_with_inner_groups() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).innerJoin(user.getAdress()).where(user.getAdress().getNumber()).isGreaterEqualThan("10").orGroup(user.getAdress().getNumber())
 		.isLike("20%").andGroup(user.getAdress().getStreet()).isLike("Carnaby Street%").or(user.getAdress().getStreet()).isLike("Picadilly Circus%").closeGroup()
 		.closeGroup();
@@ -45,7 +45,7 @@ public class WhereGroupConditionsTest {
 
     @Test
     public void where_with_groups() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).innerJoin(user.getAdress()).whereGroup(user.getAdress().getNumber()).isGreaterEqualThan("10")
 		.and(user.getAdress().getCity().getCountry()).isNull().closeGroup().orGroup(user.getAdress().getNumber()).isLike("20%").andGroup(user.getAdress().getStreet())
 		.isLike("Carnaby Street%").or(user.getAdress().getStreet()).isLike("Picadilly Circus%").closeGroup().closeGroup();

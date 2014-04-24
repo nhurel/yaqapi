@@ -19,14 +19,14 @@ public class WhereTest {
 
     @Test
     public void simple_where_is_null_clause() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	String queryString = select(user).from(user).where(user.getFirstName()).isNull().getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE user.firstName IS NULL ");
     }
 
     @Test
     public void simple_where_is_equal_clause() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isEqualTo("toto");
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE user.firstName = ?1 ");
@@ -35,7 +35,7 @@ public class WhereTest {
 
     @Test
     public void simple_where_is_equal_other_property_clause() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isEqualTo(user.getLastName());
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE user.firstName = user.lastName ");
@@ -44,7 +44,7 @@ public class WhereTest {
 
     @Test
     public void simple_where_is_equal_other_property_on_not_joined_entity_clause() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).where(user.getFirstName()).isEqualTo(user.getAdress().getStreet());
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE user.firstName = user.adress.street ");
@@ -53,7 +53,7 @@ public class WhereTest {
 
     @Test
     public void simple_where_is_equal_other_property_on_joined_entity_clause() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).rightJoin(user.getAdress()).where(user.getFirstName()).isEqualTo(user.getAdress().getStreet());
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user RIGHT JOIN user.adress adress WHERE user.firstName = adress.street ");
@@ -62,8 +62,8 @@ public class WhereTest {
 
     @Test
     public void simple_where_is_equal_other_property_on_other_entity_clause() {
-	User user = queryOn(new User());
-	User user2 = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User user2 = andQueryOn(User.class);
 	QueryBuilder query = select(user).from(user).andFrom(user2).where(user.getLastName()).isEqualTo(user2.getLastName());
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user , User user2 WHERE user.lastName = user2.lastName ");
@@ -72,8 +72,8 @@ public class WhereTest {
 
     @Test
     public void select_multiple_properties_where_is_equal_other_property_on_other_entity_clause() {
-	User user = queryOn(new User());
-	User user2 = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User user2 = andQueryOn(User.class);
 	QueryBuilder query = select(user.getFirstName(), user2.getFirstName()).from(user).andFrom(user2).where(user.getLastName()).isEqualTo(user2.getLastName());
 	String queryString = query.getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.firstName, user2.firstName FROM User user , User user2 WHERE user.lastName = user2.lastName ");
@@ -82,22 +82,22 @@ public class WhereTest {
 
     @Test
     public void where_list_property_is_null() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(user).from(user).where(user.getChildren()).isNull();
 	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE user.children IS NULL ");
     }
 
     @Test
     public void select_where_joined_list_null() {
-        User user = queryOn(new User());
+        User user = queryOn(User.class);
         String queryString = selectFrom(user).leftJoin(user.getChildren()).where(user.getChildren()).isNull().getQueryString();
         assertThat(queryString).isEqualTo("SELECT user FROM User user LEFT JOIN user.children children WHERE children IS NULL ");
     }
 
     @Test
     public void where_and_where_clause() {
-	User user = queryOn(new User());
-	User user2 = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User user2 = andQueryOn(User.class);
 	QueryBuilder query = select(user.getFirstName(), user2.getFirstName()).from(user).andFrom(user2).where(user.getLastName()).isEqualTo(user2.getLastName())
 		.and(user.getFirstName()).isNull();
 	String queryString = query.getQueryString();
@@ -107,8 +107,8 @@ public class WhereTest {
 
     @Test
     public void where_and_where_list_property_is_null() {
-	User user = queryOn(new User());
-	User user2 = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User user2 = andQueryOn(User.class);
 	QueryBuilder query = select(user.getFirstName(), user2.getFirstName()).from(user).andFrom(user2).where(user.getLastName()).isEqualTo(user2.getLastName())
 		.and(user.getChildren()).isNull();
 	String queryString = query.getQueryString();
@@ -118,8 +118,8 @@ public class WhereTest {
 
     @Test
     public void where_or_where_clause() {
-	User user = queryOn(new User());
-	User user2 = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User user2 = andQueryOn(User.class);
 	QueryBuilder query = select(user.getFirstName(), user2.getFirstName()).from(user).andFrom(user2).where(user.getLastName()).isEqualTo(user2.getLastName())
 		.or(user.getFirstName()).isNull();
 	String queryString = query.getQueryString();
@@ -129,7 +129,7 @@ public class WhereTest {
 
     @Test
     public void select_where_joined_entity_property_is_null() {
-        User user = queryOn(new User());
+        User user = queryOn(User.class);
         QueryBuilder query = select(user).from(user).rightJoin(user.getAdress()).where(user.getAdress()).isNull();
         String queryString = query.getQueryString();
         assertThat(queryString).isEqualTo("SELECT user FROM User user RIGHT JOIN user.adress adress WHERE adress IS NULL ");

@@ -31,7 +31,7 @@ public class UserDao {
     }
 
     public User getUserByFirstName(String firstName) {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	try {
 	    return (User) select(user).from(user).where(user.getFirstName()).isEqualTo(firstName).build(getSessionfactory().openSession()).uniqueResult();
 	} finally {
@@ -41,7 +41,7 @@ public class UserDao {
 
     @SuppressWarnings("unchecked")
     public List<User> getUserHavingChildren() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	try {
 	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).where(size(user.getChildren())).isGreaterEqualThan(1)
 			    .build(getSessionfactory().openSession()).list();
@@ -52,8 +52,8 @@ public class UserDao {
 
     @SuppressWarnings("unchecked")
     public List<User> getUserHavingLittleChildren() {
-	User user = queryOn(new User());
-	User child = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User child = andQueryOn(User.class);
 	try {
 	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child).where(child.getAge())
 			    .isLessEqualThan(2).and(child.getFather().getId()).isEqualTo(user.getId()).closeExists().build(getSessionfactory().openSession()).list();
@@ -64,9 +64,9 @@ public class UserDao {
 
     @SuppressWarnings("unchecked")
     public List<User> getUserHavingChildrenHavingLittleChildren() {
-	User user = queryOn(new User());
-	User child = andQueryOn(new User());
-	User littleChild = andQueryOn(new User());
+	User user = queryOn(User.class);
+	User child = andQueryOn(User.class);
+	User littleChild = andQueryOn(User.class);
 	try {
 	    return (List<User>) select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child)
 			    .whereExists(distinct(littleChild.getId())).from(littleChild).where(littleChild.getAge()).isLessEqualThan(2).and(littleChild.getFather().getId())
@@ -78,7 +78,7 @@ public class UserDao {
 
     @SuppressWarnings("unchecked")
     public String getUserNameHavingMaxChildren() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	List<Object[]> result = null;
 	try {
 	    result = select(user.getLastName(), count("*")).from(user).groupBy(user.getLastName()).orderBy(count("*")).desc().build(getSessionfactory().openSession()).list();
@@ -90,7 +90,7 @@ public class UserDao {
     }
 
     public boolean hasParent(String firstName) {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	Boolean result=null;
 	try {
 	    result =(Boolean) select(caseWhen(user.getFather().getId()).isNull().then(false).whenElse(true)).from(user).where(user.getFirstName()).isEqualTo(firstName).build(getSessionfactory().openSession()).uniqueResult();

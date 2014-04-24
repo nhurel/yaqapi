@@ -18,14 +18,14 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_list_property() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	String queryString = select(user.getChildren()).from(user).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.children FROM User user ");
     }
 
     @Test
     public void join_on_list_property() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 
 	String queryString = select(user).from(user).leftJoinFetch(user.getChildren()).leftJoin($(user.getChildren()).getAdress()).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user FROM User user LEFT JOIN FETCH user.children children LEFT JOIN children.adress adress ");
@@ -33,7 +33,7 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_property_from_joined_list_property() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 
 	String queryString = select($(user.getChildren()).getFirstName()).from(user).innerJoin(user.getChildren()).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT children.firstName FROM User user INNER JOIN user.children children ");
@@ -41,7 +41,7 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_property_from_deep_list_property() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 
 	String queryString = select($(user.getChildren()).getFirstName()).from(user).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.children.firstName FROM User user ");
@@ -49,7 +49,7 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_second_level_list_property_from_deep_list_property() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 
 	String queryString = select($(user.getChildren()).getChildren()).from(user).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.children.children FROM User user ");
@@ -57,7 +57,7 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_property_from_deep_second_level_list_property() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 
 	String queryString = select($($(user.getChildren()).getChildren()).getFirstName()).from(user).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT user.children.children.firstName FROM User user ");
@@ -65,7 +65,7 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_property_from_second_level_join_list() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 
 	String queryString = select($($(user.getChildren()).getChildren()).getFirstName()).from(user).innerJoin(user.getChildren()).innerJoin($(user.getChildren()).getChildren())
 		.getQueryString();
@@ -74,7 +74,7 @@ public class SelectCollectionsTest {
 
     @Test
     public void select_property_from_aliased_second_level_join_list() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	User children2 = $($(user.getChildren()).getChildren());
 
 	String queryString = select(children2.getFirstName()).from(user).innerJoin(user.getChildren()).innerJoin(children2).getQueryString();

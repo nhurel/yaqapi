@@ -69,9 +69,9 @@ public class MultithreadedTest {
     public Runnable newTest() {
 	return new Runnable() {
 	    public void run() {
-		User user = queryOn(new User());
-		User child = andQueryOn(new User());
-		User littleChild = andQueryOn(new User());
+		User user = queryOn(User.class);
+		User child = andQueryOn(User.class);
+		User littleChild = andQueryOn(User.class);
 		Condition<Long> query = select(user).from(user).innerJoinFetch(user.getChildren()).whereExists(distinct(child.getId())).from(child)
 			.whereExists(distinct(littleChild.getId())).from(littleChild).where(littleChild.getAge()).isLessEqualThan(2).and(littleChild.getFather().getId())
 			.isEqualTo(child.getId()).closeExists().and(child.getFather().getId()).isEqualTo(user.getId()).closeExists();
@@ -86,7 +86,7 @@ public class MultithreadedTest {
     public Runnable otherTest() {
 	return new Runnable() {
 	    public void run() {
-		User user = queryOn(new User());
+		User user = queryOn(User.class);
 		Date d = new Date();
 		Condition<?> query = select(user).from(user).innerJoin(user.getCar()).where(user.getCar().getReleaseDate()).isLessEqualThan(d)
 			.andGroup(user.getCar().getSellDate()).isNull().or(user.getCar().getSellDate()).isLessEqualThan(d).closeGroup();

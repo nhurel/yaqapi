@@ -20,14 +20,14 @@ public class CaseWhenTest {
 
     @Test
     public void case_when() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	String queryString = select(caseWhen(user.getChildren()).isNull().then(false).whenElse(true)).from(user).getQueryString();
 	assertThat(queryString).isEqualTo("SELECT (CASE WHEN user.children IS NULL THEN false ELSE true END) FROM User user ");
     }
 
     @Test
     public void select_case_when_where_case_when() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	QueryBuilder query = select(caseWhen(user.getChildren()).isNull().then(false).whenElse(true))
 			.from(user)
 			.where(caseWhen(user.getAge()).isLessEqualThan(2).then("baby")
@@ -41,7 +41,7 @@ public class CaseWhenTest {
 
     @Test
     public void select_case_when_where_case_when_variable() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	CaseWhenClause<String> caseWhenClause = caseWhen(user.getAge()).isLessEqualThan(2).then("baby")
 			.when(user.getAge()).isGreaterThan(2).and(user.getAge()).isLessThan(18).then("child")
 			.whenElse("adult");
@@ -56,7 +56,7 @@ public class CaseWhenTest {
 
     @Test
     public void select_case_when_group_by_case_when() {
-	User user = queryOn(new User());
+	User user = queryOn(User.class);
 	CaseWhenClause<String> caseWhenClause = caseWhen(user.getAge()).isLessEqualThan(2).then("baby")
 			.when(user.getAge()).isGreaterThan(2).and(user.getAge()).isLessThan(18).then("child")
 			.whenElse("adult");

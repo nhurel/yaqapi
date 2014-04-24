@@ -20,8 +20,8 @@ public class ExistsClauseTest {
 
     @Test
     public void where_exists() {
-	City city = queryOn(new City());
-	User user = andQueryOn(new User());
+	City city = queryOn(City.class);
+	User user = andQueryOn(User.class);
 	QueryBuilder query = select(city).from(city).whereExists(user.getId()).from(user).innerJoin(user.getAdress()).where(user.getAge()).isLessThan(5)
 		.and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
@@ -34,8 +34,8 @@ public class ExistsClauseTest {
 
     @Test
     public void where_not_exists() {
-	City city = queryOn(new City());
-	User user = andQueryOn(new User());
+	City city = queryOn(City.class);
+	User user = andQueryOn(User.class);
 	QueryBuilder query = select(city).from(city).whereNotExists(user.getId()).from(user).innerJoin(user.getAdress()).where(user.getAge()).isLessThan(5)
 		.and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
@@ -48,8 +48,8 @@ public class ExistsClauseTest {
 
     @Test
     public void where_exists_after_join() {
-	City city = queryOn(new City());
-	User user = andQueryOn(new User());
+	City city = queryOn(City.class);
+	User user = andQueryOn(User.class);
 	QueryBuilder query = select(city).from(city).innerJoin(city.getCountry()).whereExists(user.getId()).from(user).innerJoin(user.getAdress()).where(user.getAge())
 		.isLessThan(5).and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
@@ -63,8 +63,8 @@ public class ExistsClauseTest {
 
     @Test
     public void where_and_exists() {
-	City city = queryOn(new City());
-	User user = andQueryOn(new User());
+	City city = queryOn(City.class);
+	User user = andQueryOn(User.class);
 	QueryBuilder query = select(city).from(city).where(city.getCountry()).isNotNull().andExists(user.getId()).from(user).innerJoin(user.getAdress()).where(user.getAge())
 		.isLessThan(5).and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
@@ -78,8 +78,8 @@ public class ExistsClauseTest {
 
     @Test
     public void where_or_not_exists() {
-	City city = queryOn(new City());
-	User user = andQueryOn(new User());
+	City city = queryOn(City.class);
+	User user = andQueryOn(User.class);
 	QueryBuilder query = select(city).from(city).where(city.getCountry()).isNotNull().orNotExists(user.getId()).from(user).innerJoin(user.getAdress()).where(user.getAge())
 		.isLessThan(5).and(user.getAdress().getCity().getId()).isEqualTo(city.getId()).closeExists();
 
