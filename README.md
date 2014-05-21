@@ -32,10 +32,10 @@ import static me.hurel.hqlbuilder.builder.Yaqapi.*;
 ```
 
 ##Write your query
-The first thing to do before writing your query is to create a proxy object on the entity you want to query.
+The first thing to do before writing your query is to create a proxy object on the entity class you want to query.
 This is simply done with the *queryOn* static method: 
 ```java
-User user = queryOn(new User());
+User user = queryOn(User.class);
 ```
 
 Then, simply write your query, starting with the select method and let you drive by the DSL :
@@ -55,7 +55,7 @@ And that's it !
 
  You can put it all together :
 ```java
-User user = queryOn(new User());
+User user = queryOn(User.class);
 List<User> adults = selectFrom(user)
 						.where(user.getAge()).isGreaterThan(18)
 						.orderBy(user.getLastName())
@@ -79,7 +79,7 @@ YAQ API currently supports :
 The dollar function is a convenient way to query on properties of a collection property. 
 See example below to understand :
 ```java
-User user = queryOn(new User());
+User user = queryOn(User.class);
 List<User> parents = select(user).from(user)
 							.innerJoin(user.getChildren())
 							.where($(user.getChildren()).getAge()).isLessThan(10)
@@ -100,8 +100,8 @@ select(user).from(user)
 To query on two distinct entities, it is necessary to build two proxies. 
 Since the `queryOn` function can be called only once, you have to create the second proxy with the `andQueryOn` method.
 ```java
-User user = queryOn(new User());
-Country country = andQueryOn(new Country());
+User user = queryOn(User.class);
+Country country = andQueryOn(Country.class);
 List<User> usersWithACountryName = select(user).from(user).andFrom(country)
 									.where(user.getLastName()).isEqualTo(country.getName())
 									.build(sessionFactory.createSession()).list();
@@ -110,7 +110,7 @@ List<User> usersWithACountryName = select(user).from(user).andFrom(country)
 ## Declare variables
 Accessing deep properties can make your query hard to read. With Yaqapi, you can declare a variable for whatever entity.
 ```java
-User user = queryOn(new User());
+User user = queryOn(User.class);
 Adress adress = user.getAdress();
 City city = adress.getCity();
 List<User> users = selectFrom(user).innerJoinFetch(user.getAdress())
