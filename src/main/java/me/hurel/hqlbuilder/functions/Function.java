@@ -15,7 +15,7 @@ public interface Function<T> {
     public Object getEntity();
 
     public enum FUNCTION {
-	AVERAGE("avg"), COUNT("count"), DISTINCT("distinct"), MAX("max"), MIN("min"), SUM("sum"), SIZE("size");
+	AVERAGE("avg"), COUNT("count"), DISTINCT("distinct"), MAX("max"), MIN("min"), SUM("sum"), SIZE("size"), UPPER("upper"), LOWER("lower");
 	final String function;
 
 	FUNCTION(String function) {

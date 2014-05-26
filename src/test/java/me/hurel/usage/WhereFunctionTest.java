@@ -10,6 +10,7 @@ package me.hurel.usage;
 
 import me.hurel.entity.User;
 import me.hurel.hqlbuilder.Condition;
+import me.hurel.hqlbuilder.QueryBuilder;
 import org.junit.Test;
 
 import static me.hurel.hqlbuilder.builder.Yaqapi.*;
@@ -25,4 +26,18 @@ public class WhereFunctionTest {
 	assertThat(query.getParameters()).isNullOrEmpty();
     }
 
+    @Test
+    public void where_upper(){
+	User user = queryOn(User.class);
+	String queryString = selectFrom(user).where(upper(user.getFirstName())).isEqualTo(upper(user.getFather().getFirstName())).getQueryString();
+	assertThat(queryString).isEqualTo("SELECT user FROM User user WHERE upper(user.firstName) = upper(user.father.firstName) ");
+    }
+
+    @Test
+    public void where_lower(){
+	User user = queryOn(User.class);
+	QueryBuilder query= selectFrom(user).where(lower(user.getLastName())).isLike(lower("TITI%"));
+	assertThat(query.getQueryString()).isEqualTo("SELECT user FROM User user WHERE lower(user.lastName) LIKE lower(?1) ");
+	assertThat(query.getParameters()).containsExactly("TITI%");
+    }
 }

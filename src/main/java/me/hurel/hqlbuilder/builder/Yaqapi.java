@@ -209,4 +209,13 @@ public class Yaqapi {
     public static <T> Function<T> distinct(T methodCall) {
 	return new ParameterizedFunction<T>(FUNCTION.DISTINCT, methodCall);
     }
+
+    public static Function<String> upper(String methodCall) {
+	return new ParameterizedFunction<String>(FUNCTION.UPPER, methodCall);
+    }
+
+    public static Function<String> lower(String methodCall) {
+	return new ParameterizedFunction<String>(FUNCTION.LOWER, methodCall);
+    }
+
 }

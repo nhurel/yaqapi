@@ -27,6 +27,8 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     List<Object> parameters;
     private boolean from = false;
     private int params = 1;
+    private boolean acceptParameters = false;
+
 
     public HQBQueryStringVisitor(Map<Object, String> aliases, Map<Object, String> paths, Map<Object, Object> parentEntities, List<Object> joinedEntities) {
 	this.aliases = aliases;
@@ -36,6 +38,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(SelectHibernateQueryBuilder select) {
+	acceptParameters = false;
 	query.append("SELECT ");
 	if (select.distinct) {
 	    query.append("DISTINCT ");
@@ -58,6 +61,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(OrderByHibernateQueryBuilder order) {
+	acceptParameters = false;
 	query.append(order.separator).append(' ');
 	int i = order.aliases.length;
 	for (Object alias : order.aliases) {
@@ -73,6 +77,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(ExistsHibernateQueryBuilder exists) {
+	acceptParameters = false;
 	query.append(exists.separator).append(' ');
 	if (exists.not) {
 	    query.append("NOT ");
@@ -83,16 +88,19 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(FromHibernateQueryBuilder fromClause) {
+	acceptParameters = false;
 	query.append(from ? ',' : fromClause.join).append(' ').append(ProxyUtil.getActualClass(fromClause.object.getClass()).getSimpleName()).append(' ')
 			.append(aliases.get(fromClause.object)).append(' ');
 	from = true;
     }
 
     public void visit(JoinQueryBuilder join) {
+	acceptParameters = false;
 	query.append(join.join).append(join.fetch ? " FETCH " : ' ').append(getReducedPath(join.object, false)).append(' ').append(aliases.get(join.object)).append(' ');
     }
 
     public void visit(WhereHibernateQueryBuilder<?> builder) {
+	acceptParameters = false;
 	query.append(builder.operator).append(' ');
 	if (builder.group) {
 	    query.append("( ");
@@ -106,17 +114,20 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(NullConditionHibernateQueryBuilder<?> builder) {
+	acceptParameters = false;
 	query.append(builder.operator).append(' ');
 	closeGroup(builder);
     }
 
     public void visit(InConditionHibernateQueryBuilder<?> builder) {
+	acceptParameters = true;
 	query.append(builder.operator);
 	visitIn(builder.values);
 	closeGroup(builder);
     }
 
     private void visitIn(Object[] values) {
+	acceptParameters = true;
 	query.append(" (");
 	if (values != null) {
 	    int i = 1;
@@ -137,6 +148,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(ConditionHibernateQueryBuilder<?> builder) {
+	acceptParameters = true;
 	query.append(builder.operator).append(' ');
 	if (parentEntities.containsKey(builder.value) || builder.value instanceof Function<?>) {
 	    appendAliasOrPath(builder.value);
@@ -149,6 +161,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     private void closeGroup(ConditionHibernateQueryBuilder<?> builder) {
+	acceptParameters = false;
 	int group = builder.closeGroup + builder.closeExists;
 	while (group-- > 0) {
 	    query.append(") ");
@@ -156,6 +169,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(GroupByHibernateQueryBuilder builder) {
+	acceptParameters = false;
 	query.append("GROUP BY ");
 	int i = builder.properties.length;
 	for (Object property : builder.properties) {
@@ -173,6 +187,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
 
     public void visit(UnfinishedCaseWhenQueryBuilder builder) {
+	acceptParameters = false;
 	query.append("THEN ");
 	if (builder.value instanceof String || builder.value instanceof Character) {
 	    query.append('\'').append(builder.value).append('\'');
@@ -183,6 +198,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void visit(CaseWhenHibernateQueryBuilder builder) {
+	acceptParameters = false;
 	query.append("ELSE ");
 	if (builder.value instanceof String || builder.value instanceof Character) {
 	    query.append('\'').append(builder.value).append('\'');
@@ -193,6 +209,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     }
 
     public void appendCaseWhenClause(CaseWhenHibernateQueryBuilder builder) {
+	acceptParameters = false;
 	query.append('(');
 	for (HibernateQueryBuilder caseWhenBuilder : builder.chain) {
 	    caseWhenBuilder.accept(this);
@@ -224,6 +241,13 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	String result = null;
 	if (joinedEntities.contains(entity)) {
 	    result = aliases.get(entity);
+	} else if (!parentEntities.containsKey(entity) && entity instanceof String) {
+	    if (acceptParameters) {
+		addParameter((String) entity);
+		result = "?" + (params++);
+	    } else {
+		result = (String) entity;
+	    }
 	}
 	if (result == null) {
 	    Object knownJoinParent = entity;
@@ -232,7 +256,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	    }
 	    if (!joinedEntities.contains(knownJoinParent)) {
 		throw new RuntimeException("Failed to continue query after [" + query.toString()
-				+ "] because an entity was used in clause but neither it nor its parent appears explicitely in the from clause");
+				+ "] because an entity was used in clause but neither it nor its parent appears explicitly in the from clause");
 	    }
 	    if (!aliases.containsKey(knownJoinParent)) {
 		throw new RuntimeException("Failed to continue query after [" + query.toString() + "] because alias of the parent joined entity is unknown");
