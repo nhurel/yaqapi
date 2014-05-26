@@ -15,7 +15,7 @@ public class InConditionHibernateQueryBuilder<T> extends ConditionHibernateQuery
     final Object[] values;
 
     InConditionHibernateQueryBuilder(HibernateQueryBuilder root, OPERATOR operator, T... values) {
-	super(root, operator, null);
+	super(root, operator, (T)null);
 	this.values = HQBInvocationHandler.getCurrentInvocationHandler().poll(values);
     }
 

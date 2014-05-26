@@ -138,7 +138,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 
     public void visit(ConditionHibernateQueryBuilder<?> builder) {
 	query.append(builder.operator).append(' ');
-	if (parentEntities.containsKey(builder.value)) {
+	if (parentEntities.containsKey(builder.value) || builder.value instanceof Function<?>) {
 	    appendAliasOrPath(builder.value);
 	} else {
 	    query.append('?').append(params++);

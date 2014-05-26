@@ -2,7 +2,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. 
  * If a copy of the MPL was not distributed with this file, 
  * You can obtain one at http://mozilla.org/MPL/2.0/.
- * 
+ *
  * Contributors:
  *     Nathan Hurel - initial API and implementation
  */
@@ -21,10 +21,10 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
 
     boolean group = false;
 
-    WhereHibernateQueryBuilder(SEPARATOR separator, T entity){
+    WhereHibernateQueryBuilder(SEPARATOR separator, T entity) {
 	super();
-	this.operator=separator.separator;
-	this.value=entity;
+	this.operator = separator.separator;
+	this.value = entity;
 	chain(this);
     }
 
@@ -74,12 +74,21 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.EQUAL, entity));
     }
 
+    public ConditionHibernateQueryBuilder<T> isEqualTo(Function<T> function) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.EQUAL, function));
+    }
+
+
     /*
      * (non-Javadoc)
      * 
      * @see me.hurel.hqlbuilder.builder.WhereCLause#isNotEqualTo(T)
      */
     public ConditionHibernateQueryBuilder<T> isNotEqualTo(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_EQUAL, entity));
+    }
+
+    public ConditionHibernateQueryBuilder<T> isNotEqualTo(Function<T> entity) {
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_EQUAL, entity));
     }
 
@@ -92,12 +101,20 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.GREATER, entity));
     }
 
+    public ConditionHibernateQueryBuilder<T> isGreaterThan(Function<T> entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.GREATER, entity));
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see me.hurel.hqlbuilder.builder.WhereCLause#isGreaterEqualThan(T)
      */
     public ConditionHibernateQueryBuilder<T> isGreaterEqualThan(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.GREATER_EQUAL, entity));
+    }
+
+    public ConditionHibernateQueryBuilder<T> isGreaterEqualThan(Function<T> entity) {
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.GREATER_EQUAL, entity));
     }
 
@@ -110,12 +127,20 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LESS, entity));
     }
 
+    public ConditionHibernateQueryBuilder<T> isLessThan(Function<T> entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LESS, entity));
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see me.hurel.hqlbuilder.builder.WhereCLause#isLessEqualThan(T)
      */
     public ConditionHibernateQueryBuilder<T> isLessEqualThan(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LESS_EQUAL, entity));
+    }
+
+    public ConditionHibernateQueryBuilder<T> isLessEqualThan(Function<T> entity) {
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LESS_EQUAL, entity));
     }
 
@@ -128,12 +153,20 @@ public class WhereHibernateQueryBuilder<T> extends HibernateQueryBuilder impleme
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LIKE, entity));
     }
 
+    public ConditionHibernateQueryBuilder<T> isLike(Function<T> entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.LIKE, entity));
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see me.hurel.hqlbuilder.builder.WhereCLause#isNotLike(T)
      */
     public ConditionHibernateQueryBuilder<T> isNotLike(T entity) {
+	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_LIKE, entity));
+    }
+
+    public ConditionHibernateQueryBuilder<T> isNotLike(Function<T> entity) {
 	return chain(new ConditionHibernateQueryBuilder<T>(this, OPERATOR.NOT_LIKE, entity));
     }
 

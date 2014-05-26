@@ -26,6 +26,12 @@ public class ConditionHibernateQueryBuilder<T> extends AbstractFromQueryBuilder 
 	this.operator = operator.operator;
     }
 
+    ConditionHibernateQueryBuilder(HibernateQueryBuilder root, OPERATOR operator, Function<T> value) {
+	super(root);
+	this.value = value;
+	this.operator = operator.operator;
+    }
+
     /*
      * (non-Javadoc)
      * 
