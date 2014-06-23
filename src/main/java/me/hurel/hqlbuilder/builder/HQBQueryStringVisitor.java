@@ -25,7 +25,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
     private final Map<Object, String> paths;
     private final Map<Object, Object> parentEntities;
     private final List<Object> joinedEntities;
-    List<Object> parameters;
+    private List<Object> parameters;
     private boolean from = false;
     private int params = 1;
     private boolean acceptParameters = false;
@@ -175,9 +175,9 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	int i = builder.properties.length;
 	for (Object property : builder.properties) {
 	    if (property instanceof CaseWhenHibernateQueryBuilder) {
-            appendCaseWhenClause((CaseWhenHibernateQueryBuilder) property);
-        }else if(property instanceof  MultiParameterFunction){
-            appendAliasOrPath(property);
+		appendCaseWhenClause((CaseWhenHibernateQueryBuilder) property);
+	    } else if (property instanceof MultiParameterFunction) {
+		appendAliasOrPath(property);
 	    } else {
 		query.append(getAliasOrPath(property));
 	    }
@@ -211,7 +211,7 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	query.append(" END");
     }
 
-    public void appendCaseWhenClause(CaseWhenHibernateQueryBuilder builder) {
+    private void appendCaseWhenClause(CaseWhenHibernateQueryBuilder builder) {
 	acceptParameters = false;
 	query.append('(');
 	for (HibernateQueryBuilder caseWhenBuilder : builder.chain) {
@@ -230,20 +230,9 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 		// FIXME : any more elegant way to do this ?
 		if (function.getName().equals(FUNCTION.COUNT.getFunction()) && function.getEntity().equals("*")) {
 		    query.append(function.getEntity());
-		} else if(function instanceof MultiParameterFunction){
-            Object[] properties = ((MultiParameterFunction)function).getEntity();
-            int i = properties.length;
-            for (Object property : properties) {
-                if (property instanceof CaseWhenHibernateQueryBuilder) {
-                    appendCaseWhenClause((CaseWhenHibernateQueryBuilder) property);
-                } else {
-                    query.append(getAliasOrPath(property));
-                }
-                if (--i > 0) {
-                    query.append(", ");
-                }
-            }
-        } else{
+		} else if (function instanceof MultiParameterFunction) {
+		    appendMultiParameters((MultiParameterFunction) function);
+		} else {
 		    query.append(getAliasOrPath(function.getEntity()));
 		}
 	    }
@@ -253,13 +242,28 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	}
     }
 
+    private void appendMultiParameters(MultiParameterFunction function) {
+	Object[] properties = ((MultiParameterFunction) function).getEntity();
+	int i = properties.length;
+	for (Object property : properties) {
+	    if (property instanceof CaseWhenHibernateQueryBuilder) {
+		appendCaseWhenClause((CaseWhenHibernateQueryBuilder) property);
+	    } else {
+		query.append(getAliasOrPath(property));
+	    }
+	    if (--i > 0) {
+		query.append(", ");
+	    }
+	}
+    }
+
     private String getAliasOrPath(Object entity) {
 	String result = null;
 	if (joinedEntities.contains(entity)) {
 	    result = aliases.get(entity);
 	} else if (!parentEntities.containsKey(entity) && entity instanceof String) {
 	    if (acceptParameters) {
-		addParameter((String) entity);
+		addParameter(entity);
 		result = "?" + (params++);
 	    } else {
 		result = (String) entity;
@@ -292,21 +296,10 @@ public class HQBQueryStringVisitor implements HQBVisitor {
 	    Function<?> function = (Function<?>) entity;
 	    query.append(function.getName()).append('(');
 	    if (function.getEntity() instanceof Function<?>) {
-            appendAliasOrPath(function.getEntity());
-        }else if(function instanceof  MultiParameterFunction){
-            Object[] properties = ((MultiParameterFunction)function).getEntity();
-            int i = properties.length;
-            for (Object property : properties) {
-                if (property instanceof CaseWhenHibernateQueryBuilder) {
-                    appendCaseWhenClause((CaseWhenHibernateQueryBuilder) property);
-                } else {
-                    query.append(getAliasOrPath(property));
-                }
-                if (--i > 0) {
-                    query.append(", ");
-                }
-            }
-        } else {
+		appendAliasOrPath(function.getEntity());
+	    } else if (function instanceof MultiParameterFunction) {
+		appendMultiParameters((MultiParameterFunction) function);
+	    } else {
 		// FIXME : any more elegant way to do this ?
 		if (function.getName().equals(FUNCTION.COUNT.getFunction()) && function.getEntity().equals("*")) {
 		    query.append(function.getEntity());
