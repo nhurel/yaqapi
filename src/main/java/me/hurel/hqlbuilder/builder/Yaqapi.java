@@ -17,6 +17,7 @@ import me.hurel.hqlbuilder.functions.Function;
 import me.hurel.hqlbuilder.functions.Function.FUNCTION;
 import me.hurel.hqlbuilder.functions.IntFunction;
 import me.hurel.hqlbuilder.functions.LongFunction;
+import me.hurel.hqlbuilder.functions.MultiParameterFunction;
 import me.hurel.hqlbuilder.functions.ParameterizedFunction;
 import me.hurel.hqlbuilder.helpers.CollectionHelper;
 import me.hurel.hqlbuilder.internal.HQBInvocationHandler;
@@ -216,6 +217,10 @@ public class Yaqapi {
 
     public static Function<String> lower(String methodCall) {
 	return new ParameterizedFunction<String>(FUNCTION.LOWER, methodCall);
+    }
+
+    public static <T> Function<T> coalesce(T... methodCall){
+        return new MultiParameterFunction<T>(FUNCTION.COALESCE, methodCall);
     }
 
 }
